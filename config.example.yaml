@@ -1,0 +1,13 @@
+telegram:
+  token: "YOUR_TELEGRAM_BOT_TOKEN"
+
+google_sheets:
+  sheet_id: "YOUR_GOOGLE_SHEET_ID"
+  credentials_file: "google_credentials.json"
+  worksheet_name: "Users"
+  questions_worksheet: "Questions"
+
+webhook:
+  enabled: false
+  url: "https://your-webhook-url.com"
+  port: 8443
