@@ -34,9 +34,7 @@ config = {
 }
 
 
-# Load configuration
-with open('config.yaml', 'r') as f:
-    config = yaml.safe_load(f)
+
 
 # Initialize clients
 sheets_client = GoogleSheetsClient(config['google_sheets'])
