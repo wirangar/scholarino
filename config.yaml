@@ -2,7 +2,7 @@ telegram:
   token: ${TELEGRAM_TOKEN}
 
 google_sheets:
-  creds_path: /etc/secrets/credentials.json
+  credentials_file: /etc/secrets/credentials.json  # ⬅️ این خط کلیدی است
   spreadsheet_name: ${SPREADSHEET_NAME}
 
 webhook:
