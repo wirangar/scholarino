@@ -2,8 +2,8 @@ telegram:
   token: ${TELEGRAM_TOKEN}
 
 google_sheets:
-  credentials_file: /etc/secrets/credentials.json  # ⬅️ این خط کلیدی است
-  spreadsheet_name: ${SPREADSHEET_NAME}
+  credentials_file: /etc/secrets/credentials.json
+  spreadsheet_name: "Bazarino Orders"   # 👈 اینو دستی نوشتی
 
 webhook:
   enabled: true
