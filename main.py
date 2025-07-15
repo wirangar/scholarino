@@ -12,9 +12,27 @@ from telegram.ext import (
 from utils.google_sheets import GoogleSheetsClient
 from utils.response_builder import ResponseBuilder
 from utils.language_switcher import LanguageSwitcher
-import yaml
 import os
 from datetime import datetime
+
+# ✅ Load configuration from environment variables instead of config.yaml
+config = {
+    "google_sheets": {
+        "sheet_id": os.getenv("SHEET_ID"),
+        "credentials_file": os.getenv("GOOGLE_CREDS", "service_account.json"),
+        "worksheet_name": os.getenv("SPREADSHEET_NAME", "Scholarship"),
+        "questions_worksheet": os.getenv("QUESTIONS_SHEET_NAME", "Scholarship")
+    },
+    "telegram": {
+        "token": os.getenv("TELEGRAM_TOKEN")
+    },
+    "webhook": {
+        "enabled": True,
+        "port": int(os.getenv("PORT", 8080)),
+        "url": os.getenv("BASE_URL", "https://your-app-name.onrender.com")
+    }
+}
+
 
 # Load configuration
 with open('config.yaml', 'r') as f:
