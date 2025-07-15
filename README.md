@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Scholarino Telegram Bot
 
 A multilingual Telegram bot for answering questions about Italian scholarships.
@@ -46,3 +47,7 @@ A multilingual Telegram bot for answering questions about Italian scholarships.
 ## License
 
 MIT
+=======
+# scholarino
+robot smart for scholarships in perugia 
+>>>>>>> 7f01dbe643ee6daa74e8ef3455a393314faf058e
