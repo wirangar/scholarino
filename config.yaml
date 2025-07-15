@@ -1,0 +1,12 @@
+telegram:
+  token: ${TELEGRAM_TOKEN}
+
+google_sheets:
+  creds_path: /etc/secrets/credentials.json
+  spreadsheet_name: ${SPREADSHEET_NAME}
+
+webhook:
+  enabled: true
+  port: ${PORT}
+  url: ${BASE_URL}
+  secret_token: ${WEBHOOK_SECRET}
