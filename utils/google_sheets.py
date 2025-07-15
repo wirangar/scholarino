@@ -11,7 +11,7 @@ class GoogleSheetsClient:
         creds = ServiceAccountCredentials.from_json_keyfile_name(config['credentials_file'], scope)
         client = gspread.authorize(creds)
         
-        self.sheet = client.open_by_key(config['sheet_id'])
+        self.sheet = client.open(config['spreadsheet_name'])
         self.users_worksheet = self.sheet.worksheet(config['worksheet_name'])
         self.questions_worksheet = self.sheet.worksheet(config['questions_worksheet'])
         
