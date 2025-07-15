@@ -14,8 +14,9 @@ from utils.response_builder import ResponseBuilder
 from utils.language_switcher import LanguageSwitcher
 import os
 from datetime import datetime
+from fuzzywuzzy import fuzz
 
-# ✅ Load configuration from environment variables instead of config.yaml
+# Load configuration from environment variables
 config = {
     "google_sheets": {
         "sheet_id": os.getenv("SHEET_ID"),
@@ -32,9 +33,6 @@ config = {
         "url": os.getenv("BASE_URL", "https://your-app-name.onrender.com")
     }
 }
-
-
-
 
 # Initialize clients
 sheets_client = GoogleSheetsClient(config['google_sheets'])
