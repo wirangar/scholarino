@@ -26,7 +26,7 @@ class ResponseBuilder:
         # Initialize OpenAI API
         openai.api_key = os.getenv("OPENAI_API_KEY")
         if not openai.api_key:
-            print("Warning: OPENAI_API_KEY is not set")
+            print("❌ Error: OPENAI_API_KEY is not set or invalid!")
 
     def get_response(self, question, lang='fa'):
         print(f"Processing question: {question} (language: {lang})")
