@@ -6,6 +6,14 @@
             "en": "Answer in English",
             "it": "Risposta in Italiano"
         },
-        "section": "بخش اختیاری"
+        "section": "بخش 1"
     },
+    {
+        "questions": ["سؤال 3"],
+        "answers": {
+            "fa": "پاسخ دیگر",
+            "en": "Another answer",
+            "it": "Un'altra risposta"
+        }
+    }
 ]
