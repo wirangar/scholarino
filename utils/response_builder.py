@@ -4,15 +4,12 @@ import openai
 import os
 
 class ResponseBuilder:
-    def __init__(self, knowledge_file, fallback_text_file=None):
+    def __init__(self, knowledge_file):
+        # Load knowledge base
         with open(knowledge_file, 'r', encoding='utf-8') as f:
             self.knowledge = json.load(f)
         
-        self.fallback_text_file = fallback_text_file
-        if fallback_text_file:
-            with open(fallback_text_file, 'r', encoding='utf-8') as f:
-                self.fallback_text = json.load(f)
-
+        self.knowledge_file = knowledge_file
         openai.api_key = os.getenv("OPENAI_API_KEY")
 
     def get_response(self, question, lang='fa'):
@@ -47,22 +44,14 @@ class ResponseBuilder:
         return answer
 
     def _ai_fallback_response(self, question, lang):
-        if not self.fallback_text_file or not self.fallback_text:
-            return {
-                'fa': "متأسفانه پاسخی برای سوال شما یافت نشد. لطفاً سوال خود را به شکل دیگری مطرح کنید.",
-                'it': "Sfortunatamente, non ho trovato una risposta alla tua domanda.",
-                'en': "Unfortunately, I couldn't find an answer to your question."
-            }.get(lang, "No answer found.")
-
-        # Build the prompt
-        full_text = self.fallback_text.get("text", "")
+        # Define system prompt based on language
         system_prompt = {
-            'fa': "شما یک دستیار هوش مصنوعی هستید که بر اساس اطلاعات فایل بورس به سوالات کاربران پاسخ می‌دهید.",
-            'it': "Sei un assistente AI che risponde alle domande sulle borse di studio in base al file fornito.",
-            'en': "You are an AI assistant answering questions about scholarships based on the provided file."
+            'fa': "شما یک دستیار هوش مصنوعی هستید که به سؤالات کاربران درباره موضوعات مختلف به زبان فارسی پاسخ می‌دهید. پاسخ‌ها باید دقیق، مختصر و مفید باشند.",
+            'it': "Sei un assistente AI che risponde alle domande degli utenti su vari argomenti in italiano. Le risposte devono essere precise, concise e utili.",
+            'en': "You are an AI assistant answering user questions on various topics in English. Responses should be accurate, concise, and helpful."
         }[lang]
 
-        prompt = f"{system_prompt}\n\n🗂 متن بورس:\n{full_text[:3000]}\n\n❓ سوال: {question}"
+        prompt = f"{system_prompt}\n\n❓ سؤال: {question}"
 
         try:
             response = openai.ChatCompletion.create(
@@ -74,11 +63,28 @@ class ResponseBuilder:
                 temperature=0.2,
                 max_tokens=500
             )
-            return response.choices[0].message.content.strip()
+            ai_response = response.choices[0].message.content.strip()
+
+            # Save the question and AI response to knowledge base (optional)
+            self._save_to_knowledge_base(question, ai_response, lang)
+
+            return ai_response
         except Exception as e:
-            print("❌ AI error:", e)
+            print(f"❌ AI error: {e}")
             return {
                 'fa': "خطا در پاسخ‌دهی هوش مصنوعی. لطفاً بعداً تلاش کنید.",
                 'it': "Errore nel rispondere tramite AI. Riprova più tardi.",
                 'en': "AI response error. Please try again later."
             }[lang]
+
+    def _save_to_knowledge_base(self, question, answer, lang):
+        # Add the new question and answer to the knowledge base
+        new_entry = {
+            "questions": [question],
+            "answers": {lang: answer}
+        }
+        self.knowledge.append(new_entry)
+        
+        # Save updated knowledge base back to file
+        with open(self.knowledge_file, 'w', encoding='utf-8') as f:
+            json.dump(self.knowledge, f, ensure_ascii=False, indent=4)
