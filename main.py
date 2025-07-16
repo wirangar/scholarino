@@ -1,3 +1,7 @@
+print(f"🔍 Sheet ID is: {config['google_sheets']['sheet_id']}")
+
+
+
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
