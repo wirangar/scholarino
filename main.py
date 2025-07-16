@@ -26,7 +26,7 @@ config = {
         "sheet_id": os.getenv("SHEET_ID"),
         "credentials_file": os.getenv("GOOGLE_CREDS", "service_account.json"),
         "worksheet_name": os.getenv("SPREADSHEET_NAME", "Scholarship"),
-        "questions_worksheet": os.getenv("QUESTIONS_SHEET_NAME", "Scholarship")
+        "questions_worksheet": os.getenv("QUESTIONS_SHEET_NAME", "Bazarino Orders")
     },
     "telegram": {
         "token": os.getenv("TELEGRAM_TOKEN")
