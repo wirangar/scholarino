@@ -1,4 +1,4 @@
-print(f"🔍 Sheet ID is: {config['google_sheets']['sheet_id']}")
+
 
 
 
@@ -39,6 +39,7 @@ config = {
 }
 
 # Initialize clients
+print(f"🔍 Sheet ID is: {config['google_sheets']['sheet_id']}")
 sheets_client = GoogleSheetsClient(config['google_sheets'])
 response_builder = ResponseBuilder('data/knowledge.json')
 language_switcher = LanguageSwitcher('lang')
