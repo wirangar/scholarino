@@ -1,0 +1,34 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Log files
+*.log
+logs/
+
+# Local instance database
+*.sqlite3
+data.db
+
+# OS-specific
+.DS_Store
+Thumbs.db
