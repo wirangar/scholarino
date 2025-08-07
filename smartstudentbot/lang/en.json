@@ -1,1 +1,22 @@
-{"version": "1.0", "welcome_message": "Welcome to SmartStudentBot!"}
+{
+  "version": "1.0",
+  "welcome_message": "Welcome to SmartStudentBot!",
+  "register_first_name": "Please enter your first name:",
+  "register_last_name": "Please enter your last name (or type /skip):",
+  "register_age": "Please enter your age (or type /skip):",
+  "register_country": "Please enter your country (or type /skip):",
+  "register_field_of_study": "Please enter your field of study (or type /skip):",
+  "register_email": "Please enter your email (or type /skip):",
+  "register_success": "Registration successful! Thank you.",
+  "profile_info": "Your Profile:",
+  "first_name": "First Name",
+  "last_name": "Last Name",
+  "age": "Age",
+  "country": "Country",
+  "field_of_study": "Field of Study",
+  "email": "Email",
+  "profile_not_found": "Profile not found. Please register first using /register.",
+  "edit_profile_field": "Which field do you want to edit? (first_name, last_name, age, country, field_of_study, email):",
+  "edit_profile_value": "Please enter the new value for `{field}`:",
+  "edit_profile_success": "Profile updated successfully!"
+}

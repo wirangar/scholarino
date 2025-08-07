@@ -1,0 +1,12 @@
+telegram:
+  token: ${TELEGRAM_TOKEN}
+
+google_sheets:
+  credentials_file: /etc/secrets/credentials.json
+  spreadsheet_name: "Bazarino Orders"   # 👈 اینو دستی نوشتی
+
+webhook:
+  enabled: true
+  port: ${PORT}
+  url: ${BASE_URL}
+  secret_token: ${WEBHOOK_SECRET}

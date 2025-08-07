@@ -1,1 +1,22 @@
-{"version": "1.0", "welcome_message": "به ربات دانشجوی هوشمند خوش آمدید!"}
+{
+  "version": "1.0",
+  "welcome_message": "به ربات دانشجوی هوشمند خوش آمدید!",
+  "register_first_name": "لطفاً نام خود را وارد کنید:",
+  "register_last_name": "لطفاً نام خانوادگی خود را وارد کنید (یا با /skip رد شوید):",
+  "register_age": "لطفاً سن خود را وارد کنید (یا با /skip رد شوید):",
+  "register_country": "لطفاً کشور خود را وارد کنید (یا با /skip رد شوید):",
+  "register_field_of_study": "لطفاً رشته تحصیلی خود را وارد کنید (یا با /skip رد شوید):",
+  "register_email": "لطفاً ایمیل خود را وارد کنید (یا با /skip رد شوید):",
+  "register_success": "ثبت‌نام با موفقیت انجام شد! از شما متشکریم.",
+  "profile_info": "پروفایل شما:",
+  "first_name": "نام",
+  "last_name": "نام خانوادگی",
+  "age": "سن",
+  "country": "کشور",
+  "field_of_study": "رشته تحصیلی",
+  "email": "ایمیل",
+  "profile_not_found": "پروفایلی یافت نشد. لطفاً ابتدا با دستور /register ثبت‌نام کنید.",
+  "edit_profile_field": "کدام فیلد را می‌خواهید ویرایش کنید؟ (first_name, last_name, age, country, field_of_study, email):",
+  "edit_profile_value": "لطفاً مقدار جدید برای `{field}` را وارد کنید:",
+  "edit_profile_success": "پروفایل با موفقیت به‌روزرسانی شد!"
+}
