@@ -1,1 +1,13 @@
-{"version": "1.0", "data": []}
+{
+  "version": "1.0",
+  "data": [
+    {
+      "q": "What is a scholarship?",
+      "a": "A scholarship is a form of financial aid awarded to students to further their education."
+    },
+    {
+      "q": "بورسیه چیست؟",
+      "a": "بورسیه کمک هزینه تحصیلی است که به دانشجویان برای ادامه تحصیل اعطا می‌شود."
+    }
+  ]
+}

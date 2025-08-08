@@ -1,1 +1,21 @@
-{"version": "1.0", "data": []}
+{
+  "version": "1.0",
+  "data": [
+    {
+      "q": "How can I get a scholarship?",
+      "a": "You can apply for scholarships through the DSU office. The main requirements are related to your family's income (ISEE). Deadlines are usually in late summer."
+    },
+    {
+      "q": "Where do I get my residence permit?",
+      "a": "The residence permit (permesso di soggiorno) can be obtained from the Questura (police headquarters). You will need to book an appointment online."
+    },
+    {
+      "q": "چطور میتونم بورسیه بگیرم؟",
+      "a": "شما می‌توانید برای بورسیه از طریق دفتر DSU اقدام کنید. شرایط اصلی مربوط به درآمد خانواده (ISEE) است. ددلاین‌ها معمولاً در اواخر تابستان هستند."
+    },
+    {
+      "q": "کجا باید برای اجازه اقامت اقدام کنم؟",
+      "a": "اجازه اقامت (permesso di soggiorno) را می‌توانید از Questura (اداره پلیس) دریافت کنید. برای این کار باید وقت اینترنتی بگیرید."
+    }
+  ]
+}
