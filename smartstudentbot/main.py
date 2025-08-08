@@ -12,7 +12,12 @@ from aiogram import Bot, Dispatcher, types
 from smartstudentbot.config import TELEGRAM_BOT_TOKEN, BASE_URL, WEBHOOK_SECRET, BOT_ID, PORT
 from smartstudentbot.utils.logger import logger
 from smartstudentbot.utils.db_utils import init_db
-from smartstudentbot.handlers import cmd_start, news_handler, register_handler, profile_handler, isee_handler, voice_handler, consult_handler, gamification_handler, cost_handler, ai_handler
+from smartstudentbot.utils.db_utils import init_db
+from smartstudentbot.handlers import (
+    cmd_start, news_handler, register_handler, profile_handler, isee_handler,
+    voice_handler, consult_handler, gamification_handler, cost_handler,
+    live_chat_handler, admin_handler, ai_handler
+)
 
 # Instantiate the bot with a placeholder token if the real one isn't set.
 # The actual validation will happen in the on_startup event.
@@ -31,6 +36,8 @@ dp.include_router(voice_handler.router)
 dp.include_router(consult_handler.router)
 dp.include_router(gamification_handler.router)
 dp.include_router(cost_handler.router)
+dp.include_router(live_chat_handler.router)
+dp.include_router(admin_handler.router) # Admin handler for callbacks and replies
 
 # The AI handler should be last as it's a catch-all for text messages
 dp.include_router(ai_handler.router)

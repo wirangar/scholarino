@@ -32,5 +32,11 @@
   "consult_success": "Grazie! La tua richiesta di consulenza è stata inviata. Un amministratore esaminerà la tua richiesta e ti contatterà presto.",
   "cost_of_living_title": "Costo della Vita Stimato a {city}",
   "cost_of_living_breakdown": "Ecco una ripartizione delle spese medie mensili:",
-  "cost_of_living_no_data": "Spiacente, non sono riuscito a recuperare le informazioni sul costo della vita al momento."
+  "cost_of_living_no_data": "Spiacente, non sono riuscito a recuperare le informazioni sul costo della vita al momento.",
+  "live_chat_in_progress": "Sei già in una sessione di chat dal vivo. Usa /end_chat per terminarla.",
+  "live_chat_request_sent": "Ti sto connettendo a un amministratore... Attendi per favore. Puoi inviare i tuoi messaggi ora.",
+  "live_chat_admin_connected": "Un amministratore si è connesso. Ora puoi chattare dal vivo.",
+  "live_chat_ended_by_user": "Hai terminato la chat dal vivo.",
+  "live_chat_ended_by_admin": "L'amministratore ha terminato la sessione di chat.",
+  "live_chat_not_in_session": "Non sei in una sessione di chat dal vivo."
 }

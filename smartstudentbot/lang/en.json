@@ -32,5 +32,11 @@
   "consult_success": "Thank you! Your consultation request has been submitted. An admin will review your request and get back to you soon.",
   "cost_of_living_title": "Estimated Cost of Living in {city}",
   "cost_of_living_breakdown": "Here is a breakdown of average monthly expenses:",
-  "cost_of_living_no_data": "Sorry, I couldn't retrieve the cost of living information at the moment."
+  "cost_of_living_no_data": "Sorry, I couldn't retrieve the cost of living information at the moment.",
+  "live_chat_in_progress": "You are already in a live chat session. Use /end_chat to finish it.",
+  "live_chat_request_sent": "Connecting you to an admin... Please wait. Send your messages now.",
+  "live_chat_admin_connected": "An admin has connected. You can now chat live.",
+  "live_chat_ended_by_user": "You have ended the live chat.",
+  "live_chat_ended_by_admin": "The admin has ended the chat session.",
+  "live_chat_not_in_session": "You are not in a live chat session."
 }

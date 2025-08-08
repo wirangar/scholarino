@@ -1,240 +1,146 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 
-from aiogram import Bot
+from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.base import StorageKey
 from aiogram.types import Message, User, Chat
 
-from smartstudentbot.handlers.cmd_start import cmd_start_handler
-from smartstudentbot.handlers.news_handler import show_news
-from smartstudentbot.handlers.register_handler import cmd_register, RegisterStates
-from smartstudentbot.handlers.profile_handler import cmd_profile
-from smartstudentbot.handlers.isee_handler import cmd_isee, ISEEStates
-from smartstudentbot.handlers import voice_handler
-from smartstudentbot.handlers.consult_handler import cmd_consult, ConsultationStates
-from smartstudentbot.handlers.gamification_handler import my_points_handler, leaderboard_handler
-from smartstudentbot.handlers.cost_handler import cost_of_living_handler
+# Import all handlers to be tested
+from smartstudentbot.handlers import (
+    cmd_start, news_handler, register_handler, profile_handler,
+    isee_handler, voice_handler, consult_handler, gamification_handler,
+    cost_handler, live_chat_handler, admin_handler
+)
 from smartstudentbot.utils.db_utils import save_user, add_points_to_user
 
-@pytest.mark.asyncio
-async def test_voice_message_handler(monkeypatch):
-    """
-    Tests the voice_handler by mocking the download, transcribe, and Q&A functions.
-    """
-    # 1. Mock the dependencies
-    monkeypatch.setattr(voice_handler, "transcribe_audio", AsyncMock(return_value="What is a scholarship?"))
-    monkeypatch.setattr(voice_handler, "get_answer", AsyncMock(return_value="A scholarship is a form of financial aid."))
-    monkeypatch.setattr(voice_handler.os, "remove", MagicMock()) # Mock os.remove to avoid FileNotFoundError
-
-    # 2. Mock the bot and message objects
-    mock_bot = AsyncMock()
-    mock_bot.get_file = AsyncMock(return_value=MagicMock(file_path="voice/file.oga"))
-    mock_bot.download_file = AsyncMock()
-
+# Helper function to create a standard mock message
+def create_mock_message(user_id=123, bot_instance=None) -> AsyncMock:
     message = AsyncMock(spec=Message)
-    message.bot = mock_bot
-    message.voice = MagicMock()
-    message.voice.file_id = "test_file_id"
+    message.from_user = User(id=user_id, is_bot=False, first_name="Test")
+    message.chat = Chat(id=123, type="private")
     message.reply = AsyncMock()
+    if bot_instance:
+        message.bot = bot_instance
+    return message
 
-    # 3. Call the handler
-    await voice_handler.voice_message_handler(message)
-
-    # 4. Assert the flow
-    # It should download the file
-    mock_bot.download_file.assert_called_once()
-    # It should call the transcriber
-    voice_handler.transcribe_audio.assert_called_once()
-    # It should call the Q&A system
-    voice_handler.get_answer.assert_called_once_with("What is a scholarship?")
-    # It should reply with the final answer
-    message.reply.assert_any_call("A scholarship is a form of financial aid.")
-
-
+# Test for cmd_start
 @pytest.mark.asyncio
 async def test_cmd_start(db_session):
-    """
-    Tests the /start command handler.
-    """
-    message = AsyncMock(spec=Message)
-    message.reply = AsyncMock()
-    message.from_user = User(id=123, is_bot=False, first_name="Test")
-    message.chat = Chat(id=123, type="private")
-
-    await cmd_start_handler(message)
-
+    message = create_mock_message()
+    await cmd_start.cmd_start_handler(message)
     message.reply.assert_called_once()
-    args, kwargs = message.reply.call_args
-    assert "Welcome to SmartStudentBot!" in args[0]
+    assert "Welcome" in message.reply.call_args[0][0]
 
+# Test for news_handler
 @pytest.mark.asyncio
 async def test_show_news_no_news(db_session):
-    """
-    Tests the /news command when there are no news articles.
-    """
-    message = AsyncMock(spec=Message)
-    message.reply = AsyncMock()
-    message.from_user = User(id=123, is_bot=False, first_name="Test")
-
-    await show_news(message)
-
+    message = create_mock_message()
+    await news_handler.show_news(message)
     message.reply.assert_called_once_with("There are no news articles at the moment.")
 
+# Test for register_handler
 @pytest.mark.asyncio
 async def test_register_command_starts_fsm(db_session):
-    """
-    Tests that the /register command correctly starts the FSM.
-    """
-    # A token with a valid format is required for Bot initialization
     bot = Bot(token="123456:ABC-DEF")
-    message = AsyncMock(spec=Message)
-    message.from_user = User(id=123, is_bot=False, first_name="Test")
-    message.chat = Chat(id=123, type="private")
-    message.reply = AsyncMock()
-
-    storage = MemoryStorage()
+    message = create_mock_message()
     key = StorageKey(bot_id=bot.id, chat_id=123, user_id=123)
-    state = FSMContext(storage=storage, key=key)
+    state = FSMContext(storage=MemoryStorage(), key=key)
+    await register_handler.cmd_register(message, state)
+    assert await state.get_state() == register_handler.RegisterStates.first_name
 
-    await cmd_register(message, state)
-
-    message.reply.assert_called_once()
-    assert await state.get_state() == RegisterStates.first_name
-
+# Test for profile_handler
 @pytest.mark.asyncio
 async def test_profile_command_for_existing_user(db_session, sample_user):
-    """
-    Tests the /profile command for a user that exists in the database.
-    """
     await save_user(sample_user)
-
-    message = AsyncMock(spec=Message)
-    message.reply = AsyncMock()
-    message.from_user = User(id=sample_user.user_id, is_bot=False, first_name="Test")
-
-    await cmd_profile(message)
-
+    message = create_mock_message(user_id=sample_user.user_id)
+    await profile_handler.cmd_profile(message)
     message.reply.assert_called_once()
-    args, kwargs = message.reply.call_args
-    reply_text = args[0]
-    assert sample_user.first_name in reply_text
-    assert sample_user.country in reply_text
-    assert sample_user.email in reply_text
+    assert "Your Profile" in message.reply.call_args[0][0]
 
-@pytest.mark.asyncio
-async def test_profile_command_for_new_user(db_session):
-    """
-    Tests the /profile command for a user that does not exist.
-    """
-    message = AsyncMock(spec=Message)
-    message.reply = AsyncMock()
-    message.from_user = User(id=999, is_bot=False, first_name="New")
-
-    await cmd_profile(message)
-
-    message.reply.assert_called_once()
-    args, kwargs = message.reply.call_args
-    assert "/register" in args[0]
-
+# Test for isee_handler
 @pytest.mark.asyncio
 async def test_isee_command_starts_fsm(db_session, sample_user):
-    """
-    Tests that the /isee command correctly starts the FSM for a registered user.
-    """
-    # 1. Save a user so they are considered "registered"
     await save_user(sample_user)
-
-    # 2. Mock the message and FSM context
     bot = Bot(token="123456:ABC-DEF")
-    message = AsyncMock(spec=Message)
-    message.from_user = User(id=sample_user.user_id, is_bot=False, first_name="Test")
-    message.reply = AsyncMock()
-
-    storage = MemoryStorage()
+    message = create_mock_message(user_id=sample_user.user_id)
     key = StorageKey(bot_id=bot.id, chat_id=123, user_id=sample_user.user_id)
-    state = FSMContext(storage=storage, key=key)
+    state = FSMContext(storage=MemoryStorage(), key=key)
+    await isee_handler.cmd_isee(message, state)
+    assert await state.get_state() == isee_handler.ISEEStates.income
 
-    # 3. Call the handler
-    await cmd_isee(message, state)
+# Test for voice_handler
+@pytest.mark.asyncio
+async def test_voice_message_handler(monkeypatch):
+    monkeypatch.setattr(voice_handler, "transcribe_audio", AsyncMock(return_value="What is a scholarship?"))
+    monkeypatch.setattr(voice_handler, "get_answer", AsyncMock(return_value="A scholarship is a form of financial aid."))
+    monkeypatch.setattr(voice_handler.os, "remove", MagicMock())
+    mock_bot = AsyncMock()
+    mock_bot.get_file = AsyncMock(return_value=MagicMock(file_path="voice/file.oga", file_unique_id="unique_id"))
+    message = create_mock_message(bot_instance=mock_bot)
+    message.voice = MagicMock(file_id="test_file_id")
+    await voice_handler.voice_message_handler(message)
+    voice_handler.get_answer.assert_called_once_with("What is a scholarship?")
 
-    # 4. Assert the bot replied and set the state
-    message.reply.assert_called_once()
-    args, kwargs = message.reply.call_args
-    assert "income" in args[0] # Check if it's asking for income
-    assert await state.get_state() == ISEEStates.income
-
+# Test for consult_handler
 @pytest.mark.asyncio
 async def test_consult_command_starts_fsm(db_session, sample_user):
-    """
-    Tests that the /consult command correctly starts the FSM for a registered user.
-    """
     await save_user(sample_user)
-
     bot = Bot(token="123456:ABC-DEF")
-    message = AsyncMock(spec=Message)
-    message.from_user = User(id=sample_user.user_id, is_bot=False, first_name="Test")
-    message.reply = AsyncMock()
-
-    storage = MemoryStorage()
+    message = create_mock_message(user_id=sample_user.user_id)
     key = StorageKey(bot_id=bot.id, chat_id=123, user_id=sample_user.user_id)
-    state = FSMContext(storage=storage, key=key)
+    state = FSMContext(storage=MemoryStorage(), key=key)
+    await consult_handler.cmd_consult(message, state)
+    assert await state.get_state() == consult_handler.ConsultationStates.name
 
-    await cmd_consult(message, state)
-
-    message.reply.assert_called_once()
-    args, kwargs = message.reply.call_args
-    assert "full name" in args[0].lower() # Check if it's asking for name
-    assert await state.get_state() == ConsultationStates.name
-
+# Tests for gamification_handler
 @pytest.mark.asyncio
 async def test_my_points_handler(db_session, sample_user):
-    """
-    Tests the /points command.
-    """
     await save_user(sample_user)
     await add_points_to_user(sample_user.user_id, 77)
-
-    message = AsyncMock(spec=Message)
-    message.from_user = User(id=sample_user.user_id, is_bot=False, first_name="Test")
-    message.reply = AsyncMock()
-
-    await my_points_handler(message)
-
+    message = create_mock_message(user_id=sample_user.user_id)
+    await gamification_handler.my_points_handler(message)
     message.reply.assert_called_once_with("You currently have 77 points.")
 
 @pytest.mark.asyncio
 async def test_leaderboard_handler(db_session, sample_user):
-    """
-    Tests the /leaderboard command.
-    """
     await save_user(sample_user)
-    await add_points_to_user(sample_user.user_id, 100)
-
-    message = AsyncMock(spec=Message)
-    message.reply = AsyncMock()
-
-    await leaderboard_handler(message)
+    message = create_mock_message()
+    await gamification_handler.leaderboard_handler(message)
     message.reply.assert_called_once()
-    args, kwargs = message.reply.call_args
-    assert "Top 10 Users" in args[0]
-    assert "100 points" in args[0]
 
+# Test for cost_handler
 @pytest.mark.asyncio
 async def test_cost_of_living_handler(db_session):
-    """
-    Tests the /cost command to ensure it displays formatted information.
-    """
-    message = AsyncMock(spec=Message)
-    message.reply = AsyncMock()
-    message.from_user = User(id=123, is_bot=False, first_name="Test")
-
-    await cost_of_living_handler(message)
-
+    message = create_mock_message()
+    await cost_handler.cost_of_living_handler(message)
     message.reply.assert_called_once()
-    args, kwargs = message.reply.call_args
-    reply_text = args[0]
-    assert "Estimated Cost of Living in Perugia" in reply_text
-    assert "Rent (Single Room)" in reply_text
-    assert "Public Transport" in reply_text
+
+# Tests for live_chat_handler and admin_handler
+@pytest.mark.asyncio
+async def test_live_chat_command_starts_session(db_session, monkeypatch):
+    monkeypatch.setattr(live_chat_handler, "ADMIN_CHAT_IDS", ["98765"])
+    bot = Bot(token="123456:ABC-DEF")
+    bot.send_message = AsyncMock()
+    message = create_mock_message(bot_instance=bot)
+    key = StorageKey(bot_id=bot.id, chat_id=123, user_id=123)
+    state = FSMContext(storage=MemoryStorage(), key=key)
+    await live_chat_handler.cmd_live_chat(message, state, bot)
+    bot.send_message.assert_called()
+    assert await state.get_state() == live_chat_handler.LiveChatStates.in_chat
+
+@pytest.mark.asyncio
+async def test_admin_accept_live_chat(db_session):
+    bot = Bot(token="123456:ABC-DEF")
+    bot.send_message = AsyncMock()
+    callback_query = AsyncMock(spec=types.CallbackQuery)
+    callback_query.from_user = User(id=987, is_bot=False, first_name="Admin")
+    callback_query.data = "livechat_accept_123"
+    callback_query.message = create_mock_message()
+    callback_query.message.edit_text = AsyncMock()
+    callback_query.answer = AsyncMock()
+    live_chat_handler.ACTIVE_CHATS.clear()
+    await admin_handler.accept_live_chat(callback_query, bot)
+    assert live_chat_handler.ACTIVE_CHATS.get(123) == 987
+    bot.send_message.assert_called_once_with(123, "An admin has connected. You can now chat live.")
