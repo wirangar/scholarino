@@ -15,6 +15,7 @@ from smartstudentbot.handlers.isee_handler import cmd_isee, ISEEStates
 from smartstudentbot.handlers import voice_handler
 from smartstudentbot.handlers.consult_handler import cmd_consult, ConsultationStates
 from smartstudentbot.handlers.gamification_handler import my_points_handler, leaderboard_handler
+from smartstudentbot.handlers.cost_handler import cost_of_living_handler
 from smartstudentbot.utils.db_utils import save_user, add_points_to_user
 
 @pytest.mark.asyncio
@@ -219,3 +220,21 @@ async def test_leaderboard_handler(db_session, sample_user):
     args, kwargs = message.reply.call_args
     assert "Top 10 Users" in args[0]
     assert "100 points" in args[0]
+
+@pytest.mark.asyncio
+async def test_cost_of_living_handler(db_session):
+    """
+    Tests the /cost command to ensure it displays formatted information.
+    """
+    message = AsyncMock(spec=Message)
+    message.reply = AsyncMock()
+    message.from_user = User(id=123, is_bot=False, first_name="Test")
+
+    await cost_of_living_handler(message)
+
+    message.reply.assert_called_once()
+    args, kwargs = message.reply.call_args
+    reply_text = args[0]
+    assert "Estimated Cost of Living in Perugia" in reply_text
+    assert "Rent (Single Room)" in reply_text
+    assert "Public Transport" in reply_text

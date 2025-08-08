@@ -1,1 +1,33 @@
-{"version": "1.0", "data": []}
+{
+  "version": "1.0",
+  "city": "Perugia",
+  "currency": "EUR",
+  "summary": "The estimated monthly cost of living for a student in Perugia is between 700€ and 900€.",
+  "categories": [
+    {
+      "name": "Rent (Single Room)",
+      "average_cost": "250-350",
+      "description": "Cost for a single room in a shared apartment. It can vary based on location and apartment quality."
+    },
+    {
+      "name": "Food & Groceries",
+      "average_cost": "200-250",
+      "description": "Monthly expenses for groceries and eating out occasionally."
+    },
+    {
+      "name": "Public Transport",
+      "average_cost": "30-40",
+      "description": "Monthly pass for buses and the Minimetrò."
+    },
+    {
+      "name": "Utilities (Gas, Electricity, Internet)",
+      "average_cost": "80-120",
+      "description": "Shared monthly cost per person for utilities."
+    },
+    {
+      "name": "Personal Expenses (Entertainment, etc.)",
+      "average_cost": "100-150",
+      "description": "Includes activities like going to the cinema, gym, or meeting friends."
+    }
+  ]
+}

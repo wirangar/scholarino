@@ -29,5 +29,8 @@
   "consult_gpa": "What is your current GPA (Grade Point Average)?",
   "consult_budget": "What is your approximate budget for tuition per year (in euros)?",
   "consult_language": "What is your current Italian/English language proficiency level (e.g., A2, B1, C1)?",
-  "consult_success": "Thank you! Your consultation request has been submitted. An admin will review your request and get back to you soon."
+  "consult_success": "Thank you! Your consultation request has been submitted. An admin will review your request and get back to you soon.",
+  "cost_of_living_title": "Estimated Cost of Living in {city}",
+  "cost_of_living_breakdown": "Here is a breakdown of average monthly expenses:",
+  "cost_of_living_no_data": "Sorry, I couldn't retrieve the cost of living information at the moment."
 }

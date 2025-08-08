@@ -29,5 +29,8 @@
   "consult_gpa": "Qual è la tua media dei voti attuale (GPA)?",
   "consult_budget": "Qual è il tuo budget approssimativo per le tasse annuali (in euro)?",
   "consult_language": "Qual è il tuo attuale livello di competenza linguistica in italiano/inglese (es. A2, B1, C1)?",
-  "consult_success": "Grazie! La tua richiesta di consulenza è stata inviata. Un amministratore esaminerà la tua richiesta e ti contatterà presto."
+  "consult_success": "Grazie! La tua richiesta di consulenza è stata inviata. Un amministratore esaminerà la tua richiesta e ti contatterà presto.",
+  "cost_of_living_title": "Costo della Vita Stimato a {city}",
+  "cost_of_living_breakdown": "Ecco una ripartizione delle spese medie mensili:",
+  "cost_of_living_no_data": "Spiacente, non sono riuscito a recuperare le informazioni sul costo della vita al momento."
 }
