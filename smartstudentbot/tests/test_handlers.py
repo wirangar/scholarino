@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 from aiogram import Bot
 from aiogram.fsm.context import FSMContext
@@ -12,7 +12,43 @@ from smartstudentbot.handlers.news_handler import show_news
 from smartstudentbot.handlers.register_handler import cmd_register, RegisterStates
 from smartstudentbot.handlers.profile_handler import cmd_profile
 from smartstudentbot.handlers.isee_handler import cmd_isee, ISEEStates
+from smartstudentbot.handlers import voice_handler
 from smartstudentbot.utils.db_utils import save_user
+
+@pytest.mark.asyncio
+async def test_voice_message_handler(monkeypatch):
+    """
+    Tests the voice_handler by mocking the download, transcribe, and Q&A functions.
+    """
+    # 1. Mock the dependencies
+    monkeypatch.setattr(voice_handler, "transcribe_audio", AsyncMock(return_value="What is a scholarship?"))
+    monkeypatch.setattr(voice_handler, "get_answer", AsyncMock(return_value="A scholarship is a form of financial aid."))
+    monkeypatch.setattr(voice_handler.os, "remove", MagicMock()) # Mock os.remove to avoid FileNotFoundError
+
+    # 2. Mock the bot and message objects
+    mock_bot = AsyncMock()
+    mock_bot.get_file = AsyncMock(return_value=MagicMock(file_path="voice/file.oga"))
+    mock_bot.download_file = AsyncMock()
+
+    message = AsyncMock(spec=Message)
+    message.bot = mock_bot
+    message.voice = MagicMock()
+    message.voice.file_id = "test_file_id"
+    message.reply = AsyncMock()
+
+    # 3. Call the handler
+    await voice_handler.voice_message_handler(message)
+
+    # 4. Assert the flow
+    # It should download the file
+    mock_bot.download_file.assert_called_once()
+    # It should call the transcriber
+    voice_handler.transcribe_audio.assert_called_once()
+    # It should call the Q&A system
+    voice_handler.get_answer.assert_called_once_with("What is a scholarship?")
+    # It should reply with the final answer
+    message.reply.assert_any_call("A scholarship is a form of financial aid.")
+
 
 @pytest.mark.asyncio
 async def test_cmd_start(db_session):

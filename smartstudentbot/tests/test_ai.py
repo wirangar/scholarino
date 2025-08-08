@@ -6,7 +6,26 @@ import os
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
-from smartstudentbot.ai import question_answering
+from unittest.mock import MagicMock
+from smartstudentbot.ai import question_answering, whisper_transcriber
+
+@pytest.mark.asyncio
+async def test_transcribe_audio_success(monkeypatch):
+    """
+    Tests the transcribe_audio function with mocked whisper model.
+    """
+    # 1. Mock the whisper library functions
+    mock_transcribe = MagicMock(return_value={"text": "This is a test."})
+    mock_model = MagicMock()
+    mock_model.transcribe = mock_transcribe
+    monkeypatch.setattr(whisper_transcriber, "model", mock_model)
+
+    # 2. Call the function with a dummy file path
+    result = await whisper_transcriber.transcribe_audio("dummy/path/to/audio.oga")
+
+    # 3. Assert the result is correct
+    assert result == "This is a test."
+    mock_model.transcribe.assert_called_once_with("dummy/path/to/audio.oga")
 
 @pytest.mark.asyncio
 async def test_get_simple_answer_exact_match():
