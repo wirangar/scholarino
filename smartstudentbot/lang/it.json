@@ -23,5 +23,11 @@
   "isee_property_size": "Per favore, inserisci la dimensione della proprietà (in metri quadrati, o 0 se nessuna):",
   "isee_family_members": "Per favore, inserisci il numero di membri della famiglia (1-10):",
   "isee_result": "Il tuo ISEE:",
-  "isee_status": "Stato della borsa di studio:"
+  "isee_status": "Stato della borsa di studio:",
+  "consult_name": "Iniziamo il processo di consulenza. Qual è il tuo nome completo?",
+  "consult_field": "A quale campo di studio sei interessato?",
+  "consult_gpa": "Qual è la tua media dei voti attuale (GPA)?",
+  "consult_budget": "Qual è il tuo budget approssimativo per le tasse annuali (in euro)?",
+  "consult_language": "Qual è il tuo attuale livello di competenza linguistica in italiano/inglese (es. A2, B1, C1)?",
+  "consult_success": "Grazie! La tua richiesta di consulenza è stata inviata. Un amministratore esaminerà la tua richiesta e ti contatterà presto."
 }

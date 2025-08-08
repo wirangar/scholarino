@@ -23,5 +23,11 @@
   "isee_property_size": "Please enter the property size in square meters (or 0 if none):",
   "isee_family_members": "Please enter the number of family members (1-10):",
   "isee_result": "Your ISEE:",
-  "isee_status": "Scholarship Status:"
+  "isee_status": "Scholarship Status:",
+  "consult_name": "Let's start the consultation process. What is your full name?",
+  "consult_field": "Which field of study are you interested in?",
+  "consult_gpa": "What is your current GPA (Grade Point Average)?",
+  "consult_budget": "What is your approximate budget for tuition per year (in euros)?",
+  "consult_language": "What is your current Italian/English language proficiency level (e.g., A2, B1, C1)?",
+  "consult_success": "Thank you! Your consultation request has been submitted. An admin will review your request and get back to you soon."
 }

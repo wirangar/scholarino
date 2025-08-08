@@ -13,6 +13,7 @@ from smartstudentbot.handlers.register_handler import cmd_register, RegisterStat
 from smartstudentbot.handlers.profile_handler import cmd_profile
 from smartstudentbot.handlers.isee_handler import cmd_isee, ISEEStates
 from smartstudentbot.handlers import voice_handler
+from smartstudentbot.handlers.consult_handler import cmd_consult, ConsultationStates
 from smartstudentbot.utils.db_utils import save_user
 
 @pytest.mark.asyncio
@@ -161,3 +162,26 @@ async def test_isee_command_starts_fsm(db_session, sample_user):
     args, kwargs = message.reply.call_args
     assert "income" in args[0] # Check if it's asking for income
     assert await state.get_state() == ISEEStates.income
+
+@pytest.mark.asyncio
+async def test_consult_command_starts_fsm(db_session, sample_user):
+    """
+    Tests that the /consult command correctly starts the FSM for a registered user.
+    """
+    await save_user(sample_user)
+
+    bot = Bot(token="123456:ABC-DEF")
+    message = AsyncMock(spec=Message)
+    message.from_user = User(id=sample_user.user_id, is_bot=False, first_name="Test")
+    message.reply = AsyncMock()
+
+    storage = MemoryStorage()
+    key = StorageKey(bot_id=bot.id, chat_id=123, user_id=sample_user.user_id)
+    state = FSMContext(storage=storage, key=key)
+
+    await cmd_consult(message, state)
+
+    message.reply.assert_called_once()
+    args, kwargs = message.reply.call_args
+    assert "full name" in args[0].lower() # Check if it's asking for name
+    assert await state.get_state() == ConsultationStates.name
