@@ -18,5 +18,10 @@
   "profile_not_found": "پروفایلی یافت نشد. لطفاً ابتدا با دستور /register ثبت‌نام کنید.",
   "edit_profile_field": "کدام فیلد را می‌خواهید ویرایش کنید؟ (first_name, last_name, age, country, field_of_study, email):",
   "edit_profile_value": "لطفاً مقدار جدید برای `{field}` را وارد کنید:",
-  "edit_profile_success": "پروفایل با موفقیت به‌روزرسانی شد!"
+  "edit_profile_success": "پروفایل با موفقیت به‌روزرسانی شد!",
+  "isee_income": "لطفاً مجموع درآمد خانواده خود را (به یورو) وارد کنید:",
+  "isee_property_size": "لطفاً متراژ ملک را (به متر مربع) وارد کنید (اگر ندارید 0 وارد کنید):",
+  "isee_family_members": "لطفاً تعداد اعضای خانواده خود را (بین 1 تا 10) وارد کنید:",
+  "isee_result": "میزان ISEE شما:",
+  "isee_status": "وضعیت بورسیه:"
 }

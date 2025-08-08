@@ -11,6 +11,7 @@ from smartstudentbot.handlers.cmd_start import cmd_start_handler
 from smartstudentbot.handlers.news_handler import show_news
 from smartstudentbot.handlers.register_handler import cmd_register, RegisterStates
 from smartstudentbot.handlers.profile_handler import cmd_profile
+from smartstudentbot.handlers.isee_handler import cmd_isee, ISEEStates
 from smartstudentbot.utils.db_utils import save_user
 
 @pytest.mark.asyncio
@@ -97,3 +98,30 @@ async def test_profile_command_for_new_user(db_session):
     message.reply.assert_called_once()
     args, kwargs = message.reply.call_args
     assert "/register" in args[0]
+
+@pytest.mark.asyncio
+async def test_isee_command_starts_fsm(db_session, sample_user):
+    """
+    Tests that the /isee command correctly starts the FSM for a registered user.
+    """
+    # 1. Save a user so they are considered "registered"
+    await save_user(sample_user)
+
+    # 2. Mock the message and FSM context
+    bot = Bot(token="123456:ABC-DEF")
+    message = AsyncMock(spec=Message)
+    message.from_user = User(id=sample_user.user_id, is_bot=False, first_name="Test")
+    message.reply = AsyncMock()
+
+    storage = MemoryStorage()
+    key = StorageKey(bot_id=bot.id, chat_id=123, user_id=sample_user.user_id)
+    state = FSMContext(storage=storage, key=key)
+
+    # 3. Call the handler
+    await cmd_isee(message, state)
+
+    # 4. Assert the bot replied and set the state
+    message.reply.assert_called_once()
+    args, kwargs = message.reply.call_args
+    assert "income" in args[0] # Check if it's asking for income
+    assert await state.get_state() == ISEEStates.income

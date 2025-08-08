@@ -18,5 +18,10 @@
   "profile_not_found": "Profilo non trovato. Per favore, registrati prima usando /register.",
   "edit_profile_field": "Quale campo vuoi modificare? (first_name, last_name, age, country, field_of_study, email):",
   "edit_profile_value": "Per favore, inserisci il nuovo valore per `{field}`:",
-  "edit_profile_success": "Profilo aggiornato con successo!"
+  "edit_profile_success": "Profilo aggiornato con successo!",
+  "isee_income": "Per favore, inserisci il reddito totale della tua famiglia (in euro):",
+  "isee_property_size": "Per favore, inserisci la dimensione della proprietà (in metri quadrati, o 0 se nessuna):",
+  "isee_family_members": "Per favore, inserisci il numero di membri della famiglia (1-10):",
+  "isee_result": "Il tuo ISEE:",
+  "isee_status": "Stato della borsa di studio:"
 }

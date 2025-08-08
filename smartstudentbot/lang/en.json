@@ -18,5 +18,10 @@
   "profile_not_found": "Profile not found. Please register first using /register.",
   "edit_profile_field": "Which field do you want to edit? (first_name, last_name, age, country, field_of_study, email):",
   "edit_profile_value": "Please enter the new value for `{field}`:",
-  "edit_profile_success": "Profile updated successfully!"
+  "edit_profile_success": "Profile updated successfully!",
+  "isee_income": "Please enter your total family income (in euros):",
+  "isee_property_size": "Please enter the property size in square meters (or 0 if none):",
+  "isee_family_members": "Please enter the number of family members (1-10):",
+  "isee_result": "Your ISEE:",
+  "isee_status": "Scholarship Status:"
 }
