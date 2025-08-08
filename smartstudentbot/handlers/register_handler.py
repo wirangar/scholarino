@@ -8,6 +8,7 @@ from smartstudentbot.models import User
 from smartstudentbot.utils.db_utils import save_user
 from smartstudentbot.utils.logger import logger
 from smartstudentbot.utils.common import check_json_version
+from smartstudentbot.utils.gamification import award_points_for_action
 
 router = Router()
 
@@ -112,6 +113,10 @@ async def process_email(message: types.Message, state: FSMContext):
     )
 
     await save_user(user_model)
+
+    # Award points for completing registration
+    await award_points_for_action(message.from_user.id, "complete_registration")
+
     lang_data = load_lang()
     await message.reply(lang_data.get("register_success", "Registration successful! Thank you."))
     logger.info(f"User {message.from_user.id} completed registration.")

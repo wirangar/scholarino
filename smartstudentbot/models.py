@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, constr
-from typing import Optional
+from typing import Optional, List
 
 class User(BaseModel):
     """
@@ -14,3 +14,5 @@ class User(BaseModel):
     email: Optional[EmailStr] = None
     language: str = "en"  # Default language
     preferences: Optional[dict] = {}  # For user-specific settings
+    points: int = 0
+    badges: List[str] = []

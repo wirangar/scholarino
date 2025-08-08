@@ -8,7 +8,9 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if project_root not in sys.path:
     sys.path.insert(0, os.path.dirname(project_root))
 
-from smartstudentbot.utils.db_utils import save_news, save_user, get_user
+from unittest.mock import patch, AsyncMock
+from smartstudentbot.utils.db_utils import save_news, save_user, get_user, add_points_to_user, get_leaderboard
+from smartstudentbot.utils.gamification import award_points_for_action
 from smartstudentbot.models import User
 
 NEWS_JSON_PATH = "smartstudentbot/news.json"
@@ -89,3 +91,45 @@ async def test_get_nonexistent_user(db_session):
     """
     retrieved_user = await get_user(99999)
     assert retrieved_user is None
+
+@pytest.mark.asyncio
+async def test_add_points(db_session, sample_user):
+    """
+    Tests adding points to a user.
+    """
+    await save_user(sample_user)
+    await add_points_to_user(sample_user.user_id, 50)
+    updated_user = await get_user(sample_user.user_id)
+    assert updated_user.points == 50
+    await add_points_to_user(sample_user.user_id, 25)
+    updated_user_2 = await get_user(sample_user.user_id)
+    assert updated_user_2.points == 75
+
+@pytest.mark.asyncio
+async def test_get_leaderboard(db_session, sample_user):
+    """
+    Tests retrieving the leaderboard.
+    """
+    # Create another user
+    user2 = sample_user.model_copy(update={"user_id": 54321, "first_name": "Jane"})
+    await save_user(sample_user) # 0 points
+    await save_user(user2) # 0 points
+
+    await add_points_to_user(sample_user.user_id, 100)
+    await add_points_to_user(user2.user_id, 150)
+
+    leaderboard = await get_leaderboard(limit=5)
+    assert len(leaderboard) == 2
+    assert leaderboard[0].user_id == user2.user_id # Jane should be first
+    assert leaderboard[0].points == 150
+    assert leaderboard[1].user_id == sample_user.user_id
+    assert leaderboard[1].points == 100
+
+@pytest.mark.asyncio
+@patch("smartstudentbot.utils.gamification.add_points_to_user", new_callable=AsyncMock)
+async def test_award_points_for_action(mock_add_points, db_session, sample_user):
+    """
+    Tests the central gamification logic for awarding points.
+    """
+    await award_points_for_action(sample_user.user_id, "complete_registration")
+    mock_add_points.assert_called_once_with(sample_user.user_id, 25)

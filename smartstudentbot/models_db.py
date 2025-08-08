@@ -17,6 +17,8 @@ class UserDB(Base):
     email = Column(String, nullable=True)
     language = Column(String(10), default="en", nullable=False)
     preferences = Column(Text, default="{}", nullable=False) # Stored as a JSON string
+    points = Column(Integer, default=0, nullable=False)
+    badges = Column(Text, default="[]", nullable=False) # Stored as a JSON list of strings
 
 class News(Base):
     """SQLAlchemy model for news articles."""

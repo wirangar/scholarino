@@ -14,7 +14,8 @@ from smartstudentbot.handlers.profile_handler import cmd_profile
 from smartstudentbot.handlers.isee_handler import cmd_isee, ISEEStates
 from smartstudentbot.handlers import voice_handler
 from smartstudentbot.handlers.consult_handler import cmd_consult, ConsultationStates
-from smartstudentbot.utils.db_utils import save_user
+from smartstudentbot.handlers.gamification_handler import my_points_handler, leaderboard_handler
+from smartstudentbot.utils.db_utils import save_user, add_points_to_user
 
 @pytest.mark.asyncio
 async def test_voice_message_handler(monkeypatch):
@@ -185,3 +186,36 @@ async def test_consult_command_starts_fsm(db_session, sample_user):
     args, kwargs = message.reply.call_args
     assert "full name" in args[0].lower() # Check if it's asking for name
     assert await state.get_state() == ConsultationStates.name
+
+@pytest.mark.asyncio
+async def test_my_points_handler(db_session, sample_user):
+    """
+    Tests the /points command.
+    """
+    await save_user(sample_user)
+    await add_points_to_user(sample_user.user_id, 77)
+
+    message = AsyncMock(spec=Message)
+    message.from_user = User(id=sample_user.user_id, is_bot=False, first_name="Test")
+    message.reply = AsyncMock()
+
+    await my_points_handler(message)
+
+    message.reply.assert_called_once_with("You currently have 77 points.")
+
+@pytest.mark.asyncio
+async def test_leaderboard_handler(db_session, sample_user):
+    """
+    Tests the /leaderboard command.
+    """
+    await save_user(sample_user)
+    await add_points_to_user(sample_user.user_id, 100)
+
+    message = AsyncMock(spec=Message)
+    message.reply = AsyncMock()
+
+    await leaderboard_handler(message)
+    message.reply.assert_called_once()
+    args, kwargs = message.reply.call_args
+    assert "Top 10 Users" in args[0]
+    assert "100 points" in args[0]
