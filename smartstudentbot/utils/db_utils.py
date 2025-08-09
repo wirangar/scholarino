@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from typing import List
 
 # Use absolute imports for robustness
-from smartstudentbot.config import SQLITE_DB
+from smartstudentbot.config import DATABASE_URL, SQLITE_DB
 from smartstudentbot.utils.logger import logger
 from smartstudentbot.utils.common import check_json_version
 from smartstudentbot.models import User
