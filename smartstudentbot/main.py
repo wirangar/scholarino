@@ -13,10 +13,12 @@ from smartstudentbot.config import TELEGRAM_BOT_TOKEN, BASE_URL, WEBHOOK_SECRET,
 from smartstudentbot.utils.logger import logger
 from smartstudentbot.utils.db_utils import init_db
 from smartstudentbot.utils.db_utils import init_db
+from smartstudentbot.utils.db_utils import init_db
 from smartstudentbot.handlers import (
     cmd_start, news_handler, register_handler, profile_handler, isee_handler,
     voice_handler, consult_handler, gamification_handler, cost_handler,
-    live_chat_handler, admin_handler, ai_handler
+    live_chat_handler, admin_handler, discount_handler, italian_learning_handler,
+    roommate_handler, ai_handler
 )
 
 # Instantiate the bot with a placeholder token if the real one isn't set.
@@ -38,6 +40,9 @@ dp.include_router(gamification_handler.router)
 dp.include_router(cost_handler.router)
 dp.include_router(live_chat_handler.router)
 dp.include_router(admin_handler.router) # Admin handler for callbacks and replies
+dp.include_router(discount_handler.router)
+dp.include_router(italian_learning_handler.router)
+dp.include_router(roommate_handler.router)
 
 # The AI handler should be last as it's a catch-all for text messages
 dp.include_router(ai_handler.router)

@@ -54,6 +54,7 @@ async def save_user(user: User):
         user_data = user.model_dump()
         user_data['preferences'] = json.dumps(user_data.get('preferences', {}))
         user_data['badges'] = json.dumps(user_data.get('badges', []))
+        user_data['roommate_prefs'] = json.dumps(user_data.get('roommate_prefs', {}))
 
         if existing_user:
             for key, value in user_data.items():
@@ -87,7 +88,8 @@ async def get_user(user_id: int) -> User | None:
                 language=user_db.language,
                 preferences=json.loads(user_db.preferences or "{}"),
                 points=user_db.points,
-                badges=json.loads(user_db.badges or "[]")
+                badges=json.loads(user_db.badges or "[]"),
+                roommate_prefs=json.loads(user_db.roommate_prefs or "{}")
             )
         return None
     except Exception as e:

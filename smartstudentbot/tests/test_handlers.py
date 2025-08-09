@@ -11,7 +11,8 @@ from aiogram.types import Message, User, Chat
 from smartstudentbot.handlers import (
     cmd_start, news_handler, register_handler, profile_handler,
     isee_handler, voice_handler, consult_handler, gamification_handler,
-    cost_handler, live_chat_handler, admin_handler
+    cost_handler, live_chat_handler, admin_handler, discount_handler,
+    italian_learning_handler, roommate_handler
 )
 from smartstudentbot.utils.db_utils import save_user, add_points_to_user
 
@@ -25,7 +26,7 @@ def create_mock_message(user_id=123, bot_instance=None) -> AsyncMock:
         message.bot = bot_instance
     return message
 
-# Test for cmd_start
+# Existing Tests ...
 @pytest.mark.asyncio
 async def test_cmd_start(db_session):
     message = create_mock_message()
@@ -33,14 +34,12 @@ async def test_cmd_start(db_session):
     message.reply.assert_called_once()
     assert "Welcome" in message.reply.call_args[0][0]
 
-# Test for news_handler
 @pytest.mark.asyncio
 async def test_show_news_no_news(db_session):
     message = create_mock_message()
     await news_handler.show_news(message)
     message.reply.assert_called_once_with("There are no news articles at the moment.")
 
-# Test for register_handler
 @pytest.mark.asyncio
 async def test_register_command_starts_fsm(db_session):
     bot = Bot(token="123456:ABC-DEF")
@@ -50,7 +49,6 @@ async def test_register_command_starts_fsm(db_session):
     await register_handler.cmd_register(message, state)
     assert await state.get_state() == register_handler.RegisterStates.first_name
 
-# Test for profile_handler
 @pytest.mark.asyncio
 async def test_profile_command_for_existing_user(db_session, sample_user):
     await save_user(sample_user)
@@ -59,7 +57,6 @@ async def test_profile_command_for_existing_user(db_session, sample_user):
     message.reply.assert_called_once()
     assert "Your Profile" in message.reply.call_args[0][0]
 
-# Test for isee_handler
 @pytest.mark.asyncio
 async def test_isee_command_starts_fsm(db_session, sample_user):
     await save_user(sample_user)
@@ -70,7 +67,6 @@ async def test_isee_command_starts_fsm(db_session, sample_user):
     await isee_handler.cmd_isee(message, state)
     assert await state.get_state() == isee_handler.ISEEStates.income
 
-# Test for voice_handler
 @pytest.mark.asyncio
 async def test_voice_message_handler(monkeypatch):
     monkeypatch.setattr(voice_handler, "transcribe_audio", AsyncMock(return_value="What is a scholarship?"))
@@ -83,7 +79,6 @@ async def test_voice_message_handler(monkeypatch):
     await voice_handler.voice_message_handler(message)
     voice_handler.get_answer.assert_called_once_with("What is a scholarship?")
 
-# Test for consult_handler
 @pytest.mark.asyncio
 async def test_consult_command_starts_fsm(db_session, sample_user):
     await save_user(sample_user)
@@ -94,7 +89,6 @@ async def test_consult_command_starts_fsm(db_session, sample_user):
     await consult_handler.cmd_consult(message, state)
     assert await state.get_state() == consult_handler.ConsultationStates.name
 
-# Tests for gamification_handler
 @pytest.mark.asyncio
 async def test_my_points_handler(db_session, sample_user):
     await save_user(sample_user)
@@ -110,14 +104,12 @@ async def test_leaderboard_handler(db_session, sample_user):
     await gamification_handler.leaderboard_handler(message)
     message.reply.assert_called_once()
 
-# Test for cost_handler
 @pytest.mark.asyncio
 async def test_cost_of_living_handler(db_session):
     message = create_mock_message()
     await cost_handler.cost_of_living_handler(message)
     message.reply.assert_called_once()
 
-# Tests for live_chat_handler and admin_handler
 @pytest.mark.asyncio
 async def test_live_chat_command_starts_session(db_session, monkeypatch):
     monkeypatch.setattr(live_chat_handler, "ADMIN_CHAT_IDS", ["98765"])
@@ -144,3 +136,31 @@ async def test_admin_accept_live_chat(db_session):
     await admin_handler.accept_live_chat(callback_query, bot)
     assert live_chat_handler.ACTIVE_CHATS.get(123) == 987
     bot.send_message.assert_called_once_with(123, "An admin has connected. You can now chat live.")
+
+# New tests for the final sprint
+@pytest.mark.asyncio
+async def test_discounts_handler(db_session):
+    """Tests the /discounts command."""
+    message = create_mock_message()
+    await discount_handler.discounts_handler(message)
+    message.reply.assert_called_once()
+    assert "Mensa" in message.reply.call_args[0][0]
+
+@pytest.mark.asyncio
+async def test_italian_learning_handler(db_session):
+    """Tests the /italian command."""
+    message = create_mock_message()
+    await italian_learning_handler.italian_learning_handler(message)
+    message.reply.assert_called_once()
+    assert "Duolingo" in message.reply.call_args[0][0]
+
+@pytest.mark.asyncio
+async def test_roommate_command_starts_fsm(db_session, sample_user):
+    """Tests that the /roommate command correctly starts the FSM."""
+    await save_user(sample_user)
+    bot = Bot(token="123456:ABC-DEF")
+    message = create_mock_message(user_id=sample_user.user_id)
+    key = StorageKey(bot_id=bot.id, chat_id=123, user_id=sample_user.user_id)
+    state = FSMContext(storage=MemoryStorage(), key=key)
+    await roommate_handler.cmd_roommate(message, state)
+    assert await state.get_state() == roommate_handler.RoommateStates.looking

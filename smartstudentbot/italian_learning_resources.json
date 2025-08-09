@@ -1,1 +1,29 @@
-{"version": "1.0", "data": []}
+{
+  "version": "1.0",
+  "data": [
+    {
+      "name": "Duolingo",
+      "type": "App",
+      "description": "A popular app for beginners to learn vocabulary and basic grammar in a game-like way.",
+      "link": "https://www.duolingo.com/"
+    },
+    {
+      "name": "RAI Cultura - Lingua Italiana",
+      "type": "Website",
+      "description": "A comprehensive website from Italy's public broadcaster with lessons, exercises, and videos for all levels.",
+      "link": "https://www.rai.it/linguaitaliana/"
+    },
+    {
+      "name": "CLA Unipg",
+      "type": "University Course",
+      "description": "The official language center of the University of Perugia (Centro Linguistico d'Ateneo) offers Italian courses for international students.",
+      "link": "https://cla.unipg.it/"
+    },
+    {
+      "name": "Memrise",
+      "type": "App",
+      "description": "An app focused on vocabulary acquisition through flashcards and mnemonic techniques.",
+      "link": "https://www.memrise.com/"
+    }
+  ]
+}

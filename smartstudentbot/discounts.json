@@ -1,1 +1,23 @@
-{"version": "1.0", "data": []}
+{
+  "version": "1.0",
+  "data": [
+    {
+      "name": "Mensa (Student Cafeteria)",
+      "category": "Food",
+      "description": "Discounted meals for students at university canteens (Mensa). A full meal can cost between 3€ and 5€.",
+      "link": "https://www.adisu.umbria.it/ristorazione"
+    },
+    {
+      "name": "Bus & Minimetrò Pass",
+      "category": "Transport",
+      "description": "Students can get a discounted monthly or annual pass for public transportation in Perugia.",
+      "link": "https://www.fsbusitalia.it/content/fsbusitalia/it/turismo/servizi-speciali/perugia-link.html"
+    },
+    {
+      "name": "Museums and Cinemas",
+      "category": "Culture & Entertainment",
+      "description": "Many museums and cinemas in Perugia offer reduced ticket prices for students upon presenting a valid student ID.",
+      "link": null
+    }
+  ]
+}
