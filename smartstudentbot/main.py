@@ -12,14 +12,13 @@ from aiogram import Bot, Dispatcher, types
 from smartstudentbot.config import TELEGRAM_BOT_TOKEN, BASE_URL, WEBHOOK_SECRET, BOT_ID, PORT
 from smartstudentbot.utils.logger import logger
 from smartstudentbot.utils.db_utils import init_db
-from smartstudentbot.utils.db_utils import init_db
-from smartstudentbot.utils.db_utils import init_db
 from smartstudentbot.handlers import (
     cmd_start, news_handler, register_handler, profile_handler, isee_handler,
     voice_handler, consult_handler, gamification_handler, cost_handler,
     live_chat_handler, admin_handler, discount_handler, italian_learning_handler,
     roommate_handler, ai_handler
 )
+from smartstudentbot.admin_web import routes as admin_routes
 
 # Instantiate the bot with a placeholder token if the real one isn't set.
 # The actual validation will happen in the on_startup event.
@@ -46,6 +45,10 @@ dp.include_router(roommate_handler.router)
 
 # The AI handler should be last as it's a catch-all for text messages
 dp.include_router(ai_handler.router)
+
+# The webhook should be on a specific path, not at the root
+# Mount the admin web app at the root
+app.mount("/admin", admin_routes.router)
 
 WEBHOOK_PATH = f"/{BOT_ID}/{WEBHOOK_SECRET}"
 

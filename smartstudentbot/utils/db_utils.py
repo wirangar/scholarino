@@ -115,6 +115,20 @@ async def add_points_to_user(user_id: int, points_to_add: int):
     finally:
         session.close()
 
+async def get_all_users() -> List[User]:
+    """Retrieves all users from the database."""
+    session = SessionLocal()
+    try:
+        users_db = session.query(UserDB).order_by(UserDB.user_id).all()
+        return [
+            User.model_validate(user_db, from_attributes=True) for user_db in users_db
+        ]
+    except Exception as e:
+        logger.error(f"Failed to retrieve all users: {e}")
+        return []
+    finally:
+        session.close()
+
 async def get_leaderboard(limit: int = 10) -> List[User]:
     """Retrieves the top users for the leaderboard."""
     session = SessionLocal()

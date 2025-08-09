@@ -51,3 +51,39 @@ def test_root_health_check_endpoint():
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {"status": "alive", "bot_id": BOT_ID}
+
+# --- Admin Dashboard Tests ---
+
+def test_admin_login_page_loads():
+    """Tests that the admin login page loads correctly."""
+    response = client.get("/admin/login")
+    assert response.status_code == 200
+    assert "Admin Panel Login" in response.text
+
+def test_admin_login_fail_wrong_password():
+    """Tests that login fails with an incorrect password."""
+    response = client.post("/admin/login", data={"password": "wrongpassword"})
+    assert response.status_code == 200 # It returns the login page again
+    assert "Invalid password" in response.text
+
+def test_admin_dashboard_redirects_if_not_logged_in():
+    """Tests that the dashboard redirects to login if no session cookie is present."""
+    response = client.get("/admin/dashboard", follow_redirects=False)
+    assert response.status_code == 307 # Temporary Redirect
+    assert response.headers["location"] == "http://testserver/admin/login"
+
+def test_admin_login_success_and_dashboard_access():
+    """Tests a full successful login flow and dashboard access."""
+    # 1. Login successfully
+    response_login = client.post("/admin/login", data={"password": "strongpassword123"}, follow_redirects=False)
+    assert response_login.status_code == 302 # Found - redirecting
+    assert response_login.headers["location"] == "http://testserver/admin/dashboard"
+
+    # 2. Use the session cookie from the successful login to access the dashboard
+    session_cookie = response_login.cookies.get("admin_session")
+    assert session_cookie is not None
+
+    response_dashboard = client.get("/admin/dashboard", cookies={"admin_session": session_cookie})
+    assert response_dashboard.status_code == 200
+    assert "Admin Dashboard" in response_dashboard.text
+    assert "Registered Users" in response_dashboard.text

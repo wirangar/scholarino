@@ -37,3 +37,5 @@ FEATURE_FLAGS = {
 }
 ADMIN_WORKING_HOURS = (time(9, 0), time(17, 0))
 ISEE_THRESHOLD = 23000
+ADMIN_DASHBOARD_PASSWORD = os.getenv("ADMIN_DASHBOARD_PASSWORD", "strongpassword123")
+SESSION_SECRET_KEY = os.getenv("SESSION_SECRET_KEY", "a_very_secret_key_for_session")
