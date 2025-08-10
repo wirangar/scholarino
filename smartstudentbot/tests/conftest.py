@@ -17,9 +17,9 @@ def db_session():
     This creates all tables before the test and drops them afterwards,
     ensuring a clean slate for each test.
     """
-    Base.metadata.create_all(engine)
+    Base.metadata.create_all(bind=engine)
     yield
-    Base.metadata.drop_all(engine)
+    Base.metadata.drop_all(bind=engine)
 
 @pytest.fixture
 def sample_user() -> User:

@@ -173,6 +173,57 @@ async def find_matching_roommates(user: User) -> List[User]:
     finally:
         session.close()
 
+async def get_news_by_id(news_id: int) -> News | None:
+    """Retrieves a single news article by its ID."""
+    session = SessionLocal()
+    try:
+        return session.query(News).filter(News.id == news_id).first()
+    finally:
+        session.close()
+
+async def delete_news_by_id(news_id: int):
+    """Deletes a news article by its ID."""
+    session = SessionLocal()
+    try:
+        news_item = session.query(News).filter(News.id == news_id).first()
+        if news_item:
+            session.delete(news_item)
+            session.commit()
+            logger.info(f"News article {news_id} deleted.")
+    except Exception as e:
+        logger.error(f"Failed to delete news {news_id}: {e}")
+        session.rollback()
+    finally:
+        session.close()
+
+async def update_news(news_id: int, title: str, content: str):
+    """Updates a news article in the database."""
+    session = SessionLocal()
+    try:
+        news_item = session.query(News).filter(News.id == news_id).first()
+        if news_item:
+            news_item.title = title
+            news_item.content = content
+            session.commit()
+            logger.info(f"News article {news_id} updated.")
+    except Exception as e:
+        logger.error(f"Failed to update news {news_id}: {e}")
+        session.rollback()
+    finally:
+        session.close()
+
+async def get_all_news() -> List[News]:
+    """Retrieves all news articles from the database."""
+    session = SessionLocal()
+    try:
+        news_db = session.query(News).order_by(desc(News.timestamp)).all()
+        return news_db
+    except Exception as e:
+        logger.error(f"Failed to retrieve all news: {e}")
+        return []
+    finally:
+        session.close()
+
 async def get_leaderboard(limit: int = 10) -> List[User]:
     """Retrieves the top users for the leaderboard."""
     session = SessionLocal()

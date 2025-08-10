@@ -1,9 +1,10 @@
 import uvicorn
 import os
 import sys
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
+from sqlalchemy.orm import Session
 
-# Add the project root to the Python path to allow for absolute imports
+# Add the project root to the Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
 if project_root not in sys.path:
     sys.path.insert(0, os.path.dirname(project_root))
@@ -11,23 +12,28 @@ if project_root not in sys.path:
 from aiogram import Bot, Dispatcher, types
 from smartstudentbot.config import TELEGRAM_BOT_TOKEN, BASE_URL, WEBHOOK_SECRET, BOT_ID, PORT
 from smartstudentbot.utils.logger import logger
-from smartstudentbot.utils.db_utils import init_db
+from smartstudentbot.utils.db_utils import init_db, SessionLocal
 from smartstudentbot.handlers import (
     cmd_start, news_handler, register_handler, profile_handler, isee_handler,
     voice_handler, consult_handler, gamification_handler, cost_handler,
-    live_chat_handler, admin_handler, discount_handler, italian_learning_handler,
-    roommate_handler, ai_handler
+    live_chat_handler, admin_handler, ai_handler
 )
 from smartstudentbot.admin_web import routes as admin_routes
 
-# Instantiate the bot with a placeholder token if the real one isn't set.
-# The actual validation will happen in the on_startup event.
-# This allows the module to be imported for testing without a .env file.
+# Dependency to get DB session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 bot = Bot(token=TELEGRAM_BOT_TOKEN or "123:placeholder")
 dp = Dispatcher()
 app = FastAPI()
 
-# Include routers
+# Include bot handlers
+# ... (all dp.include_router calls remain the same)
 dp.include_router(cmd_start.router)
 dp.include_router(news_handler.router)
 dp.include_router(register_handler.router)
@@ -38,38 +44,29 @@ dp.include_router(consult_handler.router)
 dp.include_router(gamification_handler.router)
 dp.include_router(cost_handler.router)
 dp.include_router(live_chat_handler.router)
-dp.include_router(admin_handler.router) # Admin handler for callbacks and replies
-dp.include_router(discount_handler.router)
-dp.include_router(italian_learning_handler.router)
-dp.include_router(roommate_handler.router)
-
-# The AI handler should be last as it's a catch-all for text messages
+dp.include_router(admin_handler.router)
 dp.include_router(ai_handler.router)
 
-# The webhook should be on a specific path, not at the root
-# Mount the admin web app at the root
+
+# Mount admin web app
 app.mount("/admin", admin_routes.router)
 
 WEBHOOK_PATH = f"/{BOT_ID}/{WEBHOOK_SECRET}"
 
 @app.post(WEBHOOK_PATH)
-async def bot_webhook(request: Request):
-    """Process webhook updates from Telegram."""
+async def bot_webhook(request: Request, db: Session = Depends(get_db)):
     telegram_update = await request.json()
     update = types.Update(**telegram_update)
+    # Pass the db session to the dispatcher if needed, or handle it in handlers
     await dp.feed_update(bot=bot, update=update)
     return {"status": "ok"}
 
 @app.on_event("startup")
 async def on_startup():
-    """Initialize DB, validate config, and set the webhook on startup."""
     init_db()
-
-    # Validate essential configuration now
+    # ... (rest of startup logic)
     if not TELEGRAM_BOT_TOKEN or TELEGRAM_BOT_TOKEN == "123:placeholder":
         logger.critical("TELEGRAM_BOT_TOKEN is not set! The bot cannot start.")
-        # In a real server, this might trigger a more graceful shutdown
-        # For this context, exiting is fine.
         sys.exit(1)
     if not BASE_URL or not WEBHOOK_SECRET:
         logger.critical("BASE_URL or WEBHOOK_SECRET is not set! Webhook cannot be set.")
@@ -82,15 +79,14 @@ async def on_startup():
     except Exception as e:
         logger.error(f"Failed to set webhook: {e}")
 
+
 @app.on_event("shutdown")
 async def on_shutdown():
-    """Gracefully shut down the bot session."""
     logger.info("Shutting down bot session...")
     await bot.session.close()
 
 @app.get("/")
 async def root():
-    """Root endpoint for health checks."""
     return {"status": "alive", "bot_id": BOT_ID}
 
 if __name__ == "__main__":
