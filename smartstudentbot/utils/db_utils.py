@@ -129,6 +129,50 @@ async def get_all_users() -> List[User]:
     finally:
         session.close()
 
+async def find_matching_roommates(user: User) -> List[User]:
+    """Finds users with compatible roommate preferences."""
+    session = SessionLocal()
+    try:
+        if not user.roommate_prefs or not user.roommate_prefs.looking_for_roommate:
+            return []
+
+        query = session.query(UserDB).filter(
+            UserDB.user_id != user.user_id,
+            UserDB.roommate_prefs.contains('"looking_for_roommate": true')
+        )
+
+        # Filter by smoking preference
+        if user.roommate_prefs.smoker is not None:
+            query = query.filter(UserDB.roommate_prefs.contains(f'"smoker": {str(user.roommate_prefs.smoker).lower()}'))
+
+        # This is a simplified budget filter. A more advanced one would handle ranges.
+        if user.roommate_prefs.budget_max is not None:
+             query = query.filter(UserDB.roommate_prefs.contains(f'"budget_max": {user.roommate_prefs.budget_max}'))
+
+        matching_users_db = query.limit(10).all()
+
+        return [
+            User(
+                user_id=user_db.user_id,
+                first_name=user_db.first_name,
+                last_name=user_db.last_name,
+                age=user_db.age,
+                country=user_db.country,
+                field_of_study=user_db.field_of_study,
+                email=user_db.email,
+                language=user_db.language,
+                preferences=json.loads(user_db.preferences or "{}"),
+                points=user_db.points,
+                badges=json.loads(user_db.badges or "[]"),
+                roommate_prefs=json.loads(user_db.roommate_prefs or "{}")
+            ) for user_db in matching_users_db
+        ]
+    except Exception as e:
+        logger.error(f"Failed to find matching roommates for user {user.user_id}: {e}")
+        return []
+    finally:
+        session.close()
+
 async def get_leaderboard(limit: int = 10) -> List[User]:
     """Retrieves the top users for the leaderboard."""
     session = SessionLocal()

@@ -38,5 +38,13 @@
   "live_chat_admin_connected": "Un amministratore si è connesso. Ora puoi chattare dal vivo.",
   "live_chat_ended_by_user": "Hai terminato la chat dal vivo.",
   "live_chat_ended_by_admin": "L'amministratore ha terminato la sessione di chat.",
-  "live_chat_not_in_session": "Non sei in una sessione di chat dal vivo."
+  "live_chat_not_in_session": "Non sei in una sessione di chat dal vivo.",
+  "roommate_start": "Stai cercando un coinquilino? (sì/no)",
+  "roommate_ask_budget": "Qual è il tuo budget mensile per l'affitto? (es. 250-350)",
+  "roommate_ask_smoker": "Fumi? (sì/no)",
+  "roommate_ask_notes": "Hai qualche nota aggiuntiva su di te o su cosa cerchi?",
+  "roommate_prefs_saved": "Le tue preferenze per il coinquilino sono state salvate! Ora puoi usare /find_roommate per cercare.",
+  "roommate_not_looking": "Il tuo stato di ricerca coinquilino è stato aggiornato. Al momento non stai cercando.",
+  "roommate_no_matches": "Spiacente, nessun coinquilino compatibile trovato al momento. Riprova più tardi!",
+  "roommate_results_title": "Trovato/i {count} potenziale/i coinquilino/i:"
 }

@@ -38,5 +38,13 @@
   "live_chat_admin_connected": "An admin has connected. You can now chat live.",
   "live_chat_ended_by_user": "You have ended the live chat.",
   "live_chat_ended_by_admin": "The admin has ended the chat session.",
-  "live_chat_not_in_session": "You are not in a live chat session."
+  "live_chat_not_in_session": "You are not in a live chat session.",
+  "roommate_start": "Are you currently looking for a roommate? (yes/no)",
+  "roommate_ask_budget": "What is your monthly budget for rent? (e.g., 250-350)",
+  "roommate_ask_smoker": "Do you smoke? (yes/no)",
+  "roommate_ask_notes": "Any additional notes about yourself or what you're looking for?",
+  "roommate_prefs_saved": "Your roommate preferences have been saved! You can now use /find_roommate to search.",
+  "roommate_not_looking": "Your roommate search status has been updated. You are not currently looking.",
+  "roommate_no_matches": "Sorry, no matching roommates found at the moment. Try again later!",
+  "roommate_results_title": "Found {count} potential roommate(s):"
 }

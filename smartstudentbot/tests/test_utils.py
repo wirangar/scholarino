@@ -10,8 +10,10 @@ if project_root not in sys.path:
 
 from unittest.mock import patch, AsyncMock
 from smartstudentbot.utils.db_utils import save_news, save_user, get_user, add_points_to_user, get_leaderboard
+from unittest.mock import patch, AsyncMock
+from smartstudentbot.utils.db_utils import save_news, save_user, get_user, add_points_to_user, get_leaderboard, find_matching_roommates
 from smartstudentbot.utils.gamification import award_points_for_action
-from smartstudentbot.models import User
+from smartstudentbot.models import User, RoommatePreferences
 
 NEWS_JSON_PATH = "smartstudentbot/news.json"
 
@@ -133,3 +135,26 @@ async def test_award_points_for_action(mock_add_points, db_session, sample_user)
     """
     await award_points_for_action(sample_user.user_id, "complete_registration")
     mock_add_points.assert_called_once_with(sample_user.user_id, 25)
+
+@pytest.mark.asyncio
+async def test_find_matching_roommates(db_session, sample_user):
+    """
+    Tests the roommate matching logic.
+    """
+    # User 1 (the searcher)
+    sample_user.roommate_prefs = RoommatePreferences(looking_for_roommate=True, budget_max=300, smoker=False)
+    await save_user(sample_user)
+
+    # User 2 (a good match)
+    user2 = sample_user.model_copy(update={"user_id": 54321, "first_name": "Jane"})
+    user2.roommate_prefs = RoommatePreferences(looking_for_roommate=True, budget_max=300, smoker=False)
+    await save_user(user2)
+
+    # User 3 (not looking)
+    user3 = sample_user.model_copy(update={"user_id": 67890, "first_name": "Mike"})
+    user3.roommate_prefs = RoommatePreferences(looking_for_roommate=False)
+    await save_user(user3)
+
+    matches = await find_matching_roommates(sample_user)
+    assert len(matches) == 1
+    assert matches[0].user_id == user2.user_id

@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from aiogram import Bot, types
 from aiogram.fsm.context import FSMContext
@@ -22,6 +22,7 @@ def create_mock_message(user_id=123, bot_instance=None) -> AsyncMock:
     message.from_user = User(id=user_id, is_bot=False, first_name="Test")
     message.chat = Chat(id=123, type="private")
     message.reply = AsyncMock()
+    message.answer = AsyncMock()
     if bot_instance:
         message.bot = bot_instance
     return message
@@ -164,3 +165,24 @@ async def test_roommate_command_starts_fsm(db_session, sample_user):
     state = FSMContext(storage=MemoryStorage(), key=key)
     await roommate_handler.cmd_roommate(message, state)
     assert await state.get_state() == roommate_handler.RoommateStates.looking
+
+@pytest.mark.asyncio
+async def test_find_roommate_handler(db_session, sample_user):
+    """Tests the /find_roommate command."""
+    sample_user.roommate_prefs.looking_for_roommate = True
+    await save_user(sample_user)
+    message = create_mock_message(user_id=sample_user.user_id)
+
+    with patch("smartstudentbot.handlers.roommate_handler.find_matching_roommates", new_callable=AsyncMock) as mock_find:
+        mock_find.return_value = []
+        await roommate_handler.cmd_find_roommate(message)
+        message.reply.assert_called_with("Sorry, no matching roommates found at the moment. Try again later!")
+
+    message.reply.reset_mock()
+    with patch("smartstudentbot.handlers.roommate_handler.find_matching_roommates", new_callable=AsyncMock) as mock_find:
+        user2 = sample_user.model_copy(update={"user_id": 54321})
+        mock_find.return_value = [user2]
+        await roommate_handler.cmd_find_roommate(message)
+        assert message.reply.call_count == 1
+        assert message.answer.call_count == 1
+        assert "Found 1 potential roommate(s):" in message.reply.call_args[0][0]
