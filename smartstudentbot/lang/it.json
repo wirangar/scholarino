@@ -46,5 +46,11 @@
   "roommate_prefs_saved": "Le tue preferenze per il coinquilino sono state salvate! Ora puoi usare /find_roommate per cercare.",
   "roommate_not_looking": "Il tuo stato di ricerca coinquilino è stato aggiornato. Al momento non stai cercando.",
   "roommate_no_matches": "Spiacente, nessun coinquilino compatibile trovato al momento. Riprova più tardi!",
-  "roommate_results_title": "Trovato/i {count} potenziale/i coinquilino/i:"
+  "roommate_results_title": "Trovato/i {count} potenziale/i coinquilino/i:",
+  "story_submit_start": "Fantastico! Per favore, scrivi la tua storia di successo e inviamela. Raccontaci del tuo percorso, delle sfide e dei risultati.",
+  "story_submit_short": "La tua storia sembra un po' corta. Per favore, fornisci maggiori dettagli per ispirare gli altri!",
+  "story_submit_success": "Grazie per aver condiviso la tua storia! È stata inviata per la revisione e sarà pubblicata dopo l'approvazione.",
+  "stories_title": "Ecco alcune storie di successo dalla nostra comunità:",
+  "stories_none": "Nessuna storia di successo è stata ancora pubblicata. Sii il primo a condividere la tua con /submit_story!",
+  "story_by": "Storia da {author_name}"
 }

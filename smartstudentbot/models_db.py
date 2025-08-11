@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy import Column, Integer, String, Text, Boolean
 from sqlalchemy.orm import declarative_base
 
 # A single Base for all database models
@@ -30,3 +30,13 @@ class News(Base):
     content = Column(Text, nullable=False)
     file = Column(String, nullable=True)
     timestamp = Column(String, nullable=False)
+
+class SuccessStoryDB(Base):
+    """SQLAlchemy model for success stories."""
+    __tablename__ = "success_stories"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, nullable=False)
+    story_text = Column(Text, nullable=False)
+    timestamp = Column(String, nullable=False)
+    is_approved = Column(Boolean, default=False, nullable=False)

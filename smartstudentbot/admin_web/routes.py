@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from itsdangerous import URLSafeSerializer, BadSignature
 
 from smartstudentbot.config import ADMIN_DASHBOARD_PASSWORD, SESSION_SECRET_KEY
-from smartstudentbot.utils.db_utils import get_all_users, get_all_news, save_news, get_news_by_id, update_news, delete_news_by_id
+from smartstudentbot.utils.db_utils import get_all_users, get_all_news, save_news, get_news_by_id, update_news, delete_news_by_id, get_all_stories, approve_story
 from datetime import datetime
 
 router = APIRouter()
@@ -84,6 +84,14 @@ async def delete_news_submit(request: Request, news_id: int, admin: dict = Depen
     await delete_news_by_id(news_id)
     return RedirectResponse(url=request.url_for('dashboard_page'), status_code=status.HTTP_303_SEE_OTHER)
 
+@router.post("/approve-story/{story_id}")
+async def approve_story_submit(request: Request, story_id: int, admin: dict = Depends(get_current_admin)):
+    if not admin:
+        return RedirectResponse(url=request.url_for('login_page'))
+
+    await approve_story(story_id)
+    return RedirectResponse(url=request.url_for('dashboard_page'), status_code=status.HTTP_303_SEE_OTHER)
+
 @router.get("/dashboard", response_class=HTMLResponse, name="dashboard_page")
 async def dashboard_page(request: Request, admin: dict = Depends(get_current_admin)):
     if not admin:
@@ -91,4 +99,5 @@ async def dashboard_page(request: Request, admin: dict = Depends(get_current_adm
 
     users = await get_all_users()
     news = await get_all_news()
-    return templates.TemplateResponse("dashboard.html", {"request": request, "users": users, "news": news})
+    stories = await get_all_stories()
+    return templates.TemplateResponse("dashboard.html", {"request": request, "users": users, "news": news, "stories": stories})

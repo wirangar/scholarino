@@ -16,7 +16,8 @@ from smartstudentbot.utils.db_utils import init_db, SessionLocal
 from smartstudentbot.handlers import (
     cmd_start, news_handler, register_handler, profile_handler, isee_handler,
     voice_handler, consult_handler, gamification_handler, cost_handler,
-    live_chat_handler, admin_handler, ai_handler
+    live_chat_handler, admin_handler, discount_handler, italian_learning_handler,
+    roommate_handler, success_story_handler, ai_handler
 )
 from smartstudentbot.admin_web import routes as admin_routes
 
@@ -45,6 +46,10 @@ dp.include_router(gamification_handler.router)
 dp.include_router(cost_handler.router)
 dp.include_router(live_chat_handler.router)
 dp.include_router(admin_handler.router)
+dp.include_router(discount_handler.router)
+dp.include_router(italian_learning_handler.router)
+dp.include_router(roommate_handler.router)
+dp.include_router(success_story_handler.router)
 dp.include_router(ai_handler.router)
 
 

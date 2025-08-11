@@ -86,6 +86,40 @@
         {% else %}
             <p>No news articles found.</p>
         {% endif %}
+
+        <h2 style="margin-top: 2rem;">Success Stories for Moderation</h2>
+        {% if stories %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User ID</th>
+                        <th>Story</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for story in stories %}
+                        <tr>
+                            <td>{{ story.id }}</td>
+                            <td>{{ story.user_id }}</td>
+                            <td>{{ story.story_text[:100] }}...</td>
+                            <td>{{ "Approved" if story.is_approved else "Pending" }}</td>
+                            <td>
+                                {% if not story.is_approved %}
+                                    <form action="/admin/approve-story/{{ story.id }}" method="post" style="display:inline;">
+                                        <button type="submit" class="link-button">Approve</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No success stories submitted yet.</p>
+        {% endif %}
     </div>
 </body>
 </html>

@@ -7,8 +7,8 @@ from typing import List
 from smartstudentbot.config import DATABASE_URL, SQLITE_DB
 from smartstudentbot.utils.logger import logger
 from smartstudentbot.utils.common import check_json_version
-from smartstudentbot.models import User
-from smartstudentbot.models_db import Base, News, UserDB
+from smartstudentbot.models import User, SuccessStory
+from smartstudentbot.models_db import Base, News, UserDB, SuccessStoryDB
 
 # Set up the database engine
 engine = create_engine(
@@ -125,6 +125,64 @@ async def get_all_users() -> List[User]:
         ]
     except Exception as e:
         logger.error(f"Failed to retrieve all users: {e}")
+        return []
+    finally:
+        session.close()
+
+async def get_all_stories() -> List[SuccessStory]:
+    """Retrieves all success stories, regardless of approval status."""
+    session = SessionLocal()
+    try:
+        stories_db = session.query(SuccessStoryDB).order_by(desc(SuccessStoryDB.timestamp)).all()
+        return [SuccessStory.model_validate(story, from_attributes=True) for story in stories_db]
+    except Exception as e:
+        logger.error(f"Failed to retrieve all stories: {e}")
+        return []
+    finally:
+        session.close()
+
+async def approve_story(story_id: int):
+    """Approves a success story."""
+    session = SessionLocal()
+    try:
+        story = session.query(SuccessStoryDB).filter(SuccessStoryDB.id == story_id).first()
+        if story:
+            story.is_approved = True
+            session.commit()
+            logger.info(f"Success story {story_id} approved.")
+    except Exception as e:
+        logger.error(f"Failed to approve story {story_id}: {e}")
+        session.rollback()
+    finally:
+        session.close()
+
+async def save_story(story: SuccessStory):
+    """Saves a success story to the database."""
+    session = SessionLocal()
+    try:
+        story_db = SuccessStoryDB(
+            user_id=story.user_id,
+            story_text=story.story_text,
+            timestamp=str(story.timestamp),
+            is_approved=story.is_approved
+        )
+        session.add(story_db)
+        session.commit()
+        logger.info(f"Success story from user {story.user_id} saved for moderation.")
+    except Exception as e:
+        logger.error(f"Failed to save success story for user {story.user_id}: {e}")
+        session.rollback()
+    finally:
+        session.close()
+
+async def get_approved_stories() -> List[SuccessStory]:
+    """Retrieves all approved success stories."""
+    session = SessionLocal()
+    try:
+        stories_db = session.query(SuccessStoryDB).filter(SuccessStoryDB.is_approved == True).order_by(desc(SuccessStoryDB.timestamp)).all()
+        return [SuccessStory.model_validate(story, from_attributes=True) for story in stories_db]
+    except Exception as e:
+        logger.error(f"Failed to retrieve approved stories: {e}")
         return []
     finally:
         session.close()

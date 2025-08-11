@@ -46,5 +46,11 @@
   "roommate_prefs_saved": "Your roommate preferences have been saved! You can now use /find_roommate to search.",
   "roommate_not_looking": "Your roommate search status has been updated. You are not currently looking.",
   "roommate_no_matches": "Sorry, no matching roommates found at the moment. Try again later!",
-  "roommate_results_title": "Found {count} potential roommate(s):"
+  "roommate_results_title": "Found {count} potential roommate(s):",
+  "story_submit_start": "That's great! Please write down your success story and send it to me. Tell us about your journey, challenges, and achievements.",
+  "story_submit_short": "Your story seems a bit short. Please provide more details to inspire others!",
+  "story_submit_success": "Thank you for sharing your story! It has been submitted for review and will be published after approval.",
+  "stories_title": "Here are some success stories from our community:",
+  "stories_none": "No success stories have been published yet. Be the first to share yours with /submit_story!",
+  "story_by": "Story from {author_name}"
 }

@@ -12,8 +12,14 @@ from unittest.mock import patch, AsyncMock
 from smartstudentbot.utils.db_utils import save_news, save_user, get_user, add_points_to_user, get_leaderboard
 from unittest.mock import patch, AsyncMock
 from smartstudentbot.utils.db_utils import save_news, save_user, get_user, add_points_to_user, get_leaderboard, find_matching_roommates
+from unittest.mock import patch, AsyncMock
+from smartstudentbot.utils.db_utils import (
+    save_news, save_user, get_user, add_points_to_user, get_leaderboard,
+    find_matching_roommates, save_story, get_approved_stories,
+    get_all_stories, approve_story
+)
 from smartstudentbot.utils.gamification import award_points_for_action
-from smartstudentbot.models import User, RoommatePreferences
+from smartstudentbot.models import User, RoommatePreferences, SuccessStory
 
 NEWS_JSON_PATH = "smartstudentbot/news.json"
 
@@ -158,3 +164,31 @@ async def test_find_matching_roommates(db_session, sample_user):
     matches = await find_matching_roommates(sample_user)
     assert len(matches) == 1
     assert matches[0].user_id == user2.user_id
+
+@pytest.mark.asyncio
+async def test_success_story_crud(db_session, sample_user):
+    """
+    Tests the full lifecycle of a success story: save, get all, approve, get approved.
+    """
+    # 1. Save a new story
+    story = SuccessStory(user_id=sample_user.user_id, story_text="I found a great apartment!")
+    await save_story(story)
+
+    # 2. Get all stories (should be 1, but not approved)
+    all_stories = await get_all_stories()
+    assert len(all_stories) == 1
+    assert not all_stories[0].is_approved
+
+    # 3. Get approved stories (should be 0)
+    approved_stories = await get_approved_stories()
+    assert len(approved_stories) == 0
+
+    # 4. Approve the story
+    story_id = all_stories[0].id
+    await approve_story(story_id)
+
+    # 5. Get approved stories again (should be 1)
+    approved_stories_after = await get_approved_stories()
+    assert len(approved_stories_after) == 1
+    assert approved_stories_after[0].id == story_id
+    assert approved_stories_after[0].is_approved
