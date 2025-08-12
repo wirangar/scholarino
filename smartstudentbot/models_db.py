@@ -12,6 +12,7 @@ class UserDB(Base):
     first_name = Column(String(50), nullable=False)
     last_name = Column(String(50), nullable=True)
     age = Column(Integer, nullable=True)
+    gender = Column(String(20), nullable=True) # Adding gender
     country = Column(String(100), nullable=True)
     field_of_study = Column(String(100), nullable=True)
     email = Column(String, nullable=True)

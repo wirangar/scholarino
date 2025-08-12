@@ -7,10 +7,9 @@ from aiogram.fsm.state import State, StatesGroup
 
 # Absolute imports for robustness
 from smartstudentbot.config import ADMIN_CHAT_IDS, CHANNEL_ID, FEATURE_FLAGS
-from smartstudentbot.utils.db_utils import save_news
+from smartstudentbot.utils.db_utils import save_news, get_all_news
 from smartstudentbot.utils.gdrive import upload_file
 from smartstudentbot.utils.logger import logger
-from smartstudentbot.utils.json_utils import read_json_file
 
 router = Router()
 
@@ -84,23 +83,22 @@ async def process_news_content(message: types.Message, state: FSMContext):
 
 @router.message(Command("news"))
 async def show_news(message: types.Message):
-    """Displays the latest news articles to the user."""
-    news_json_path = "smartstudentbot/news.json"
-    data = read_json_file(news_json_path)
+    """Displays the latest news articles to the user from the database."""
+    latest_news = await get_all_news(limit=5)
 
-    if not data or not data.get("data"):
+    if not latest_news:
         await message.reply("There are no news articles at the moment.")
         return
 
     response = "*Latest News:*\n\n"
-    # Show the last 5 news items
-    for news_item in reversed(data["data"][-5:]):
+    for news_item in latest_news:
         # Escape characters for MarkdownV2
-        title = news_item['title'].replace('.', '\\.').replace('-', '\\-')
-        content = news_item['content'].replace('.', '\\.').replace('-', '\\-')
+        title = news_item.title.replace('.', '\\.').replace('-', '\\-')
+        content = news_item.content.replace('.', '\\.').replace('-', '\\-')
         response += f"*{title}*\n{content}\n"
-        if news_item.get("file"):
-            response += f"[Download File]({news_item['file']})\n"
+        if news_item.file:
+            # Assuming the file link is a valid URL
+            response += f"[Download File]({news_item.file})\n"
         response += "--- \n"
 
     await message.reply(response, parse_mode="MarkdownV2")

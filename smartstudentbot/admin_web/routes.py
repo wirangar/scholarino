@@ -30,7 +30,7 @@ def get_current_admin(request: Request):
 
 @router.get("/login", response_class=HTMLResponse, name="login_page")
 async def login_page(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse(request, "login.html", {})
 
 @router.post("/login")
 async def login_submit(request: Request, password: str = Form(...)):
@@ -40,7 +40,7 @@ async def login_submit(request: Request, password: str = Form(...)):
         response.set_cookie(key="admin_session", value=session_data, httponly=True)
         return response
     else:
-        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid password"})
+        return templates.TemplateResponse(request, "login.html", {"error": "Invalid password"})
 
 @router.get("/logout")
 async def logout(request: Request):
@@ -71,7 +71,7 @@ async def edit_news_page(request: Request, news_id: int, admin: dict = Depends(g
     if not news_item:
         return Response("News not found", status_code=404)
 
-    return templates.TemplateResponse("edit_news.html", {"request": request, "news": news_item})
+    return templates.TemplateResponse(request, "edit_news.html", {"news": news_item})
 
 @router.post("/edit-news/{news_id}")
 async def edit_news_submit(request: Request, news_id: int, title: str = Form(...), content: str = Form(...), admin: dict = Depends(get_current_admin)):
@@ -105,7 +105,7 @@ async def dashboard_page(request: Request, admin: dict = Depends(get_current_adm
     users = await get_all_users()
     news = await get_all_news()
     stories = await get_all_stories()
-    return templates.TemplateResponse("dashboard.html", {"request": request, "users": users, "news": news, "stories": stories})
+    return templates.TemplateResponse(request, "dashboard.html", {"users": users, "news": news, "stories": stories})
 
 @router.get("/qna", response_class=HTMLResponse, name="qna_page")
 async def qna_page(request: Request, admin: dict = Depends(get_current_admin)):
@@ -113,7 +113,7 @@ async def qna_page(request: Request, admin: dict = Depends(get_current_admin)):
         return RedirectResponse(url=request.url_for('login_page'))
 
     qna_data = read_json_file(QNA_FILE_PATH)
-    return templates.TemplateResponse("qna.html", {"request": request, "qna_data": qna_data.get("data", [])})
+    return templates.TemplateResponse(request, "qna.html", {"qna_data": qna_data.get("data", [])})
 
 @router.post("/qna/add", name="add_qna")
 async def add_qna(request: Request, question: str = Form(...), answer: str = Form(...), admin: dict = Depends(get_current_admin)):
@@ -134,7 +134,7 @@ async def edit_qna_page(request: Request, item_id: int, admin: dict = Depends(ge
     if not item:
         return Response("Item not found", status_code=404)
 
-    return templates.TemplateResponse("edit_qna.html", {"request": request, "item": item})
+    return templates.TemplateResponse(request, "edit_qna.html", {"item": item})
 
 @router.post("/qna/edit/{item_id}", name="edit_qna")
 async def edit_qna(request: Request, item_id: int, question: str = Form(...), answer: str = Form(...), admin: dict = Depends(get_current_admin)):
@@ -161,7 +161,7 @@ async def discounts_page(request: Request, admin: dict = Depends(get_current_adm
         return RedirectResponse(url=request.url_for('login_page'))
 
     discounts_data = read_json_file(DISCOUNTS_FILE_PATH)
-    return templates.TemplateResponse("discounts.html", {"request": request, "discounts_data": discounts_data.get("data", [])})
+    return templates.TemplateResponse(request, "discounts.html", {"discounts_data": discounts_data.get("data", [])})
 
 @router.post("/discounts/add", name="add_discount")
 async def add_discount(request: Request, store: str = Form(...), offer: str = Form(...), conditions: str = Form(...), admin: dict = Depends(get_current_admin)):
@@ -182,7 +182,7 @@ async def edit_discount_page(request: Request, item_id: int, admin: dict = Depen
     if not item:
         return Response("Item not found", status_code=404)
 
-    return templates.TemplateResponse("edit_discount.html", {"request": request, "item": item})
+    return templates.TemplateResponse(request, "edit_discount.html", {"item": item})
 
 @router.post("/discounts/edit/{item_id}", name="edit_discount")
 async def edit_discount(request: Request, item_id: int, store: str = Form(...), offer: str = Form(...), conditions: str = Form(...), admin: dict = Depends(get_current_admin)):
@@ -209,7 +209,7 @@ async def learning_page(request: Request, admin: dict = Depends(get_current_admi
         return RedirectResponse(url=request.url_for('login_page'))
 
     learning_data = read_json_file(LEARNING_FILE_PATH)
-    return templates.TemplateResponse("learning.html", {"request": request, "learning_data": learning_data.get("data", [])})
+    return templates.TemplateResponse(request, "learning.html", {"learning_data": learning_data.get("data", [])})
 
 @router.post("/learning/add", name="add_learning")
 async def add_learning(request: Request, type: str = Form(...), name: str = Form(...), description: str = Form(...), link: str = Form(...), admin: dict = Depends(get_current_admin)):
@@ -230,7 +230,7 @@ async def edit_learning_page(request: Request, item_id: int, admin: dict = Depen
     if not item:
         return Response("Item not found", status_code=404)
 
-    return templates.TemplateResponse("edit_learning.html", {"request": request, "item": item})
+    return templates.TemplateResponse(request, "edit_learning.html", {"item": item})
 
 @router.post("/learning/edit/{item_id}", name="edit_learning")
 async def edit_learning(request: Request, item_id: int, type: str = Form(...), name: str = Form(...), description: str = Form(...), link: str = Form(...), admin: dict = Depends(get_current_admin)):

@@ -9,6 +9,7 @@ project_root = os.path.dirname(os.path.abspath(__file__))
 if project_root not in sys.path:
     sys.path.insert(0, os.path.dirname(project_root))
 
+from contextlib import asynccontextmanager
 from aiogram import Bot, Dispatcher, types
 from smartstudentbot.config import TELEGRAM_BOT_TOKEN, BASE_URL, WEBHOOK_SECRET, BOT_ID, PORT
 from smartstudentbot.utils.logger import logger
@@ -21,6 +22,31 @@ from smartstudentbot.handlers import (
 )
 from smartstudentbot.admin_web import routes as admin_routes
 
+# Lifespan manager
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup logic
+    init_db()
+    if not TELEGRAM_BOT_TOKEN or TELEGRAM_BOT_TOKEN == "123:placeholder":
+        logger.critical("TELEGRAM_BOT_TOKEN is not set! The bot cannot start.")
+        sys.exit(1)
+    if not BASE_URL or not WEBHOOK_SECRET:
+        logger.critical("BASE_URL or WEBHOOK_SECRET is not set! Webhook cannot be set.")
+        sys.exit(1)
+
+    webhook_url = f"{BASE_URL.rstrip('/')}{WEBHOOK_PATH}"
+    try:
+        await bot.set_webhook(url=webhook_url)
+        logger.info(f"Webhook set for bot {BOT_ID} at {webhook_url}")
+    except Exception as e:
+        logger.error(f"Failed to set webhook: {e}")
+
+    yield
+
+    # Shutdown logic
+    logger.info("Shutting down bot session...")
+    await bot.session.close()
+
 # Dependency to get DB session
 def get_db():
     db = SessionLocal()
@@ -31,7 +57,7 @@ def get_db():
 
 bot = Bot(token=TELEGRAM_BOT_TOKEN or "123:placeholder")
 dp = Dispatcher()
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 # Include bot handlers
 # ... (all dp.include_router calls remain the same)
@@ -65,30 +91,6 @@ async def bot_webhook(request: Request, db: Session = Depends(get_db)):
     # Pass the db session to the dispatcher if needed, or handle it in handlers
     await dp.feed_update(bot=bot, update=update)
     return {"status": "ok"}
-
-@app.on_event("startup")
-async def on_startup():
-    init_db()
-    # ... (rest of startup logic)
-    if not TELEGRAM_BOT_TOKEN or TELEGRAM_BOT_TOKEN == "123:placeholder":
-        logger.critical("TELEGRAM_BOT_TOKEN is not set! The bot cannot start.")
-        sys.exit(1)
-    if not BASE_URL or not WEBHOOK_SECRET:
-        logger.critical("BASE_URL or WEBHOOK_SECRET is not set! Webhook cannot be set.")
-        sys.exit(1)
-
-    webhook_url = f"{BASE_URL.rstrip('/')}{WEBHOOK_PATH}"
-    try:
-        await bot.set_webhook(url=webhook_url)
-        logger.info(f"Webhook set for bot {BOT_ID} at {webhook_url}")
-    except Exception as e:
-        logger.error(f"Failed to set webhook: {e}")
-
-
-@app.on_event("shutdown")
-async def on_shutdown():
-    logger.info("Shutting down bot session...")
-    await bot.session.close()
 
 @app.get("/")
 async def root():

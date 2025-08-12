@@ -17,6 +17,7 @@ class RegisterStates(StatesGroup):
     first_name = State()
     last_name = State()
     age = State()
+    gender = State()
     country = State()
     field_of_study = State()
     email = State()
@@ -52,7 +53,7 @@ async def process_last_name(message: types.Message, state: FSMContext):
 
 @router.message(RegisterStates.age)
 async def process_age(message: types.Message, state: FSMContext):
-    """Processes age and asks for country."""
+    """Processes age and asks for gender."""
     if message.text.lower() != "/skip":
         try:
             age = int(message.text)
@@ -62,6 +63,19 @@ async def process_age(message: types.Message, state: FSMContext):
         except (ValueError, TypeError):
             await message.reply("Please enter a valid number for age (between 16 and 100), or type /skip.")
             return
+    lang_data = load_lang()
+    await message.reply(lang_data.get("register_gender", "Please enter your gender (Male, Female, or /skip):"))
+    await state.set_state(RegisterStates.gender)
+
+@router.message(RegisterStates.gender)
+async def process_gender(message: types.Message, state: FSMContext):
+    """Processes gender and asks for country."""
+    if message.text.lower() != "/skip":
+        gender = message.text.capitalize()
+        if gender not in ["Male", "Female"]:
+             await message.reply("Please enter a valid gender (Male or Female), or type /skip.")
+             return
+        await state.update_data(gender=gender)
     lang_data = load_lang()
     await message.reply(lang_data.get("register_country", "Please enter your country (or type /skip):"))
     await state.set_state(RegisterStates.country)
@@ -107,6 +121,7 @@ async def process_email(message: types.Message, state: FSMContext):
         first_name=final_data["first_name"],
         last_name=final_data.get("last_name"),
         age=final_data.get("age"),
+        gender=final_data.get("gender"),
         country=final_data.get("country"),
         field_of_study=final_data.get("field_of_study"),
         email=final_data.get("email")

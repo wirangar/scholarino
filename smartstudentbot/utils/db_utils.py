@@ -45,6 +45,28 @@ async def save_news(news: dict):
     finally:
         session.close()
 
+async def add_badge_to_user(user_id: int, badge_name: str):
+    """Adds a new badge to a user if they don't have it already."""
+    session = SessionLocal()
+    try:
+        user = session.query(UserDB).filter(UserDB.user_id == user_id).first()
+        if user:
+            badges = json.loads(user.badges or "[]")
+            if badge_name not in badges:
+                badges.append(badge_name)
+                user.badges = json.dumps(badges)
+                session.commit()
+                logger.info(f"Added badge '{badge_name}' to user {user_id}.")
+            else:
+                logger.info(f"User {user_id} already has the badge '{badge_name}'.")
+        else:
+            logger.warning(f"Attempted to add badge to non-existent user {user_id}.")
+    except Exception as e:
+        logger.error(f"Failed to add badge to user {user_id}: {e}")
+        session.rollback()
+    finally:
+        session.close()
+
 async def save_user(user: User):
     """Saves or updates a user's profile in the database."""
     session = SessionLocal()
@@ -141,14 +163,21 @@ async def get_all_stories() -> List[SuccessStory]:
         session.close()
 
 async def approve_story(story_id: int):
-    """Approves a success story."""
+    """Approves a success story and awards points/badge to the author."""
     session = SessionLocal()
     try:
         story = session.query(SuccessStoryDB).filter(SuccessStoryDB.id == story_id).first()
-        if story:
+        if story and not story.is_approved:
             story.is_approved = True
-            session.commit()
+            session.commit() # Commit the approval first
             logger.info(f"Success story {story_id} approved.")
+
+            # Now, award points and badge in a separate transaction
+            # This makes the logic more robust.
+            author_id = story.user_id
+            await add_points_to_user(author_id, 50) # 50 points for an approved story
+            await add_badge_to_user(author_id, "Inspirer")
+
     except Exception as e:
         logger.error(f"Failed to approve story {story_id}: {e}")
         session.rollback()
@@ -186,44 +215,68 @@ async def get_approved_stories() -> List[SuccessStory]:
     finally:
         session.close()
 
+from smartstudentbot.models import GenderPreference
+
 async def find_matching_roommates(user: User) -> List[User]:
-    """Finds users with compatible roommate preferences."""
+    """Finds users with compatible roommate preferences using more advanced logic."""
     session = SessionLocal()
     try:
         if not user.roommate_prefs or not user.roommate_prefs.looking_for_roommate:
             return []
 
-        query = session.query(UserDB).filter(
+        # Get all potential candidates first
+        candidates_db = session.query(UserDB).filter(
             UserDB.user_id != user.user_id,
             UserDB.roommate_prefs.contains('"looking_for_roommate": true')
-        )
+        ).all()
 
-        # Filter by smoking preference
-        if user.roommate_prefs.smoker is not None:
-            query = query.filter(UserDB.roommate_prefs.contains(f'"smoker": {str(user.roommate_prefs.smoker).lower()}'))
-
-        # This is a simplified budget filter. A more advanced one would handle ranges.
-        if user.roommate_prefs.budget_max is not None:
-             query = query.filter(UserDB.roommate_prefs.contains(f'"budget_max": {user.roommate_prefs.budget_max}'))
-
-        matching_users_db = query.limit(10).all()
-
-        return [
-            User(
-                user_id=user_db.user_id,
-                first_name=user_db.first_name,
-                last_name=user_db.last_name,
-                age=user_db.age,
-                country=user_db.country,
-                field_of_study=user_db.field_of_study,
-                email=user_db.email,
-                language=user_db.language,
-                preferences=json.loads(user_db.preferences or "{}"),
-                points=user_db.points,
-                badges=json.loads(user_db.badges or "[]"),
-                roommate_prefs=json.loads(user_db.roommate_prefs or "{}")
-            ) for user_db in matching_users_db
+        # Convert DB objects to Pydantic models for easier handling
+        candidates = [
+            User.model_validate(c, from_attributes=True) for c in candidates_db
         ]
+
+        matches = []
+
+        # Unpack user's preferences for easier access
+        user_prefs = user.roommate_prefs
+        user_gender = user.gender
+
+        for candidate in candidates:
+            candidate_prefs = candidate.roommate_prefs
+            candidate_gender = candidate.gender
+
+            # --- Two-way Gender Preference Check ---
+            # My preference must match their gender
+            my_pref_ok = (user_prefs.gender_preference == GenderPreference.ANY or
+                          user_prefs.gender_preference.value == candidate_gender)
+            # Their preference must match my gender
+            their_pref_ok = (candidate_prefs.gender_preference == GenderPreference.ANY or
+                             candidate_prefs.gender_preference.value == user_gender)
+
+            if not (my_pref_ok and their_pref_ok):
+                continue
+
+            # --- Smoker Preference Check ---
+            if user_prefs.smoker != candidate_prefs.smoker:
+                continue
+
+            # --- Budget Overlap Check ---
+            my_min = user_prefs.budget_min or 0
+            my_max = user_prefs.budget_max or float('inf')
+            cand_min = candidate_prefs.budget_min or 0
+            cand_max = candidate_prefs.budget_max or float('inf')
+
+            if my_max < cand_min or cand_max < my_min:
+                continue # No overlap
+
+            # If all checks pass, it's a match
+            matches.append(candidate)
+
+        # Optional: Prioritize matches with the same field of study
+        matches.sort(key=lambda m: m.field_of_study == user.field_of_study, reverse=True)
+
+        return matches[:10] # Return top 10 matches
+
     except Exception as e:
         logger.error(f"Failed to find matching roommates for user {user.user_id}: {e}")
         return []

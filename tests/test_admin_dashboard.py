@@ -64,7 +64,7 @@ def test_data_dir(tmp_path):
 def test_login_and_get_dashboard(test_data_dir):
     """Test successful login and access to the dashboard."""
     # Step 1: Try to access dashboard without login, should redirect
-    response = client.get("/admin/dashboard", allow_redirects=False)
+    response = client.get("/admin/dashboard", follow_redirects=False)
     assert response.status_code == 307 # Temporary Redirect
 
     # Step 2: Login with correct password
@@ -85,7 +85,7 @@ def test_qna_crud_flow(test_data_dir):
     response_add = client.post(
         "/admin/qna/add",
         data={"question": "Test Q", "answer": "Test A"},
-        allow_redirects=False
+        follow_redirects=False
     )
     assert response_add.status_code == 303 # See Other, redirecting after POST
 
@@ -103,7 +103,7 @@ def test_qna_crud_flow(test_data_dir):
     response_update = client.post(
         f"/admin/qna/edit/{item_id}",
         data={"question": "Updated Q", "answer": "Updated A"},
-        allow_redirects=False
+        follow_redirects=False
     )
     assert response_update.status_code == 303
 
@@ -112,7 +112,7 @@ def test_qna_crud_flow(test_data_dir):
     assert "Test Q" not in response_read_after_update.text
 
     # 4. DELETE
-    response_delete = client.post(f"/admin/qna/delete/{item_id}", allow_redirects=False)
+    response_delete = client.post(f"/admin/qna/delete/{item_id}", follow_redirects=False)
     assert response_delete.status_code == 303
 
     response_read_after_delete = client.get("/admin/qna")
@@ -127,7 +127,7 @@ def test_discounts_crud_flow(test_data_dir):
     client.post(
         "/admin/discounts/add",
         data={"store": "Test Store", "offer": "10% off", "conditions": "Students only"},
-        allow_redirects=False
+        follow_redirects=False
     )
 
     # 2. READ
@@ -141,7 +141,7 @@ def test_discounts_crud_flow(test_data_dir):
     client.post(
         f"/admin/discounts/edit/{item_id}",
         data={"store": "Updated Store", "offer": "20% off", "conditions": "All students"},
-        allow_redirects=False
+        follow_redirects=False
     )
 
     response_read_after_update = client.get("/admin/discounts")
@@ -149,7 +149,7 @@ def test_discounts_crud_flow(test_data_dir):
     assert "Test Store" not in response_read_after_update.text
 
     # 4. DELETE
-    client.post(f"/admin/discounts/delete/{item_id}", allow_redirects=False)
+    client.post(f"/admin/discounts/delete/{item_id}", follow_redirects=False)
 
     response_read_after_delete = client.get("/admin/discounts")
     assert "Updated Store" not in response_read_after_delete.text
@@ -163,7 +163,7 @@ def test_learning_crud_flow(test_data_dir):
     client.post(
         "/admin/learning/add",
         data={"type": "Website", "name": "Test Site", "description": "A site for testing", "link": "http://example.com"},
-        allow_redirects=False
+        follow_redirects=False
     )
 
     # 2. READ
@@ -177,7 +177,7 @@ def test_learning_crud_flow(test_data_dir):
     client.post(
         f"/admin/learning/edit/{item_id}",
         data={"type": "Book", "name": "Updated Book", "description": "An updated book", "link": "http://example.com/book"},
-        allow_redirects=False
+        follow_redirects=False
     )
 
     response_read_after_update = client.get("/admin/learning")
@@ -185,7 +185,7 @@ def test_learning_crud_flow(test_data_dir):
     assert "Test Site" not in response_read_after_update.text
 
     # 4. DELETE
-    client.post(f"/admin/learning/delete/{item_id}", allow_redirects=False)
+    client.post(f"/admin/learning/delete/{item_id}", follow_redirects=False)
 
     response_read_after_delete = client.get("/admin/learning")
     assert "Updated Book" not in response_read_after_delete.text

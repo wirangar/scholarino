@@ -37,8 +37,15 @@ async def cmd_profile(message: types.Message):
         f"*- {lang_data.get('age', 'Age')}:* {user.age or '-'}\n"
         f"*- {lang_data.get('country', 'Country')}:* {user.country or '-'}\n"
         f"*- {lang_data.get('field_of_study', 'Field of Study')}:* {user.field_of_study or '-'}\n"
-        f"*- {lang_data.get('email', 'Email')}:* {user.email or '-'}"
+        f"*- {lang_data.get('email', 'Email')}:* {user.email or '-'}\n\n"
+        f"*{lang_data.get('profile_gamification', 'Gamification:')}*\n"
+        f"*- {lang_data.get('points', 'Points')}:* {user.points}\n"
     )
+
+    if user.badges:
+        badges_str = ", ".join(user.badges)
+        response += f"*- {lang_data.get('badges', 'Badges')}:* 🏅 {badges_str}\n"
+
     await message.reply(response, parse_mode="MarkdownV2")
     logger.info(f"User {message.from_user.id} viewed their profile.")
 

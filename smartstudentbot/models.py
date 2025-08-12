@@ -2,12 +2,20 @@ from pydantic import BaseModel, EmailStr, constr, Field
 from typing import Optional, List
 from datetime import datetime
 
+from enum import Enum
+
+class GenderPreference(str, Enum):
+    MALE = "Male"
+    FEMALE = "Female"
+    ANY = "Any"
+
 class RoommatePreferences(BaseModel):
     """Pydantic model for roommate preferences."""
     looking_for_roommate: bool = False
     budget_min: Optional[int] = None
     budget_max: Optional[int] = None
     smoker: Optional[bool] = None
+    gender_preference: GenderPreference = GenderPreference.ANY
     notes: Optional[str] = None
 
 class User(BaseModel):
@@ -18,6 +26,7 @@ class User(BaseModel):
     first_name: constr(min_length=1, max_length=50)
     last_name: Optional[constr(min_length=1, max_length=50)] = None
     age: Optional[int] = None
+    gender: Optional[str] = None
     country: Optional[constr(min_length=2, max_length=100)] = None
     field_of_study: Optional[constr(min_length=2, max_length=100)] = None
     email: Optional[EmailStr] = None

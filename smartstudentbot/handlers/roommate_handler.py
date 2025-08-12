@@ -10,10 +10,13 @@ from smartstudentbot.utils.json_utils import read_json_file
 
 router = Router()
 
+from smartstudentbot.models import GenderPreference
+
 class RoommateStates(StatesGroup):
     looking = State()
     budget = State()
     smoker = State()
+    gender_preference = State()
     notes = State()
 
 def load_lang(lang: str = "en") -> dict:
@@ -75,6 +78,20 @@ async def process_smoker(message: types.Message, state: FSMContext):
         return
     await state.update_data(smoker=(is_smoker == lang_data.get("yes", "yes")))
 
+    await message.reply(lang_data.get("roommate_ask_gender_pref", "What is your gender preference for a roommate? (Male, Female, Any)"))
+    await state.set_state(RoommateStates.gender_preference)
+
+@router.message(RoommateStates.gender_preference)
+async def process_gender_preference(message: types.Message, state: FSMContext):
+    user = await get_user(message.from_user.id)
+    lang_data = load_lang(user.language)
+    try:
+        preference = GenderPreference(message.text.capitalize())
+        await state.update_data(gender_preference=preference)
+    except ValueError:
+        await message.reply("Please choose a valid option: Male, Female, or Any.")
+        return
+
     await message.reply(lang_data.get("roommate_ask_notes", "Any additional notes?"))
     await state.set_state(RoommateStates.notes)
 
@@ -87,6 +104,7 @@ async def process_notes(message: types.Message, state: FSMContext):
     user.roommate_prefs.budget_min = form_data.get("budget_min")
     user.roommate_prefs.budget_max = form_data.get("budget_max")
     user.roommate_prefs.smoker = form_data.get("smoker")
+    user.roommate_prefs.gender_preference = form_data.get("gender_preference", GenderPreference.ANY)
     user.roommate_prefs.notes = message.text
 
     await save_user(user)
@@ -113,7 +131,9 @@ async def cmd_find_roommate(message: types.Message):
     for match in matches:
         response = (
             f"**Potential Roommate:**\n"
+            f"- **Gender:** {match.gender or 'N/A'}\n"
             f"- **Age:** {match.age or 'N/A'}\n"
+            f"- **Field of Study:** {match.field_of_study or 'N/A'}\n"
             f"- **Smoker:** {'Yes' if match.roommate_prefs.smoker else 'No'}\n"
             f"- **Budget:** {match.roommate_prefs.budget_min}-{match.roommate_prefs.budget_max} EUR\n"
             f"- **Notes:** {match.roommate_prefs.notes or 'N/A'}"
