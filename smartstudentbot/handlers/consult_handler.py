@@ -5,7 +5,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 from smartstudentbot.utils.db_utils import get_user
 from smartstudentbot.utils.logger import logger
-from smartstudentbot.utils.common import check_json_version
+from smartstudentbot.utils.json_utils import read_json_file
 from smartstudentbot.config import ADMIN_CHAT_IDS
 
 router = Router()
@@ -21,7 +21,7 @@ class ConsultationStates(StatesGroup):
 
 def load_lang(lang: str = "en") -> dict:
     """Loads language strings from the correct path."""
-    return check_json_version(f"smartstudentbot/lang/{lang}.json") or {}
+    return read_json_file(f"smartstudentbot/lang/{lang}.json") or {}
 
 @router.message(Command("consult"))
 async def cmd_consult(message: types.Message, state: FSMContext):

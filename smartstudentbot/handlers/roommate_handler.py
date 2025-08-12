@@ -6,7 +6,7 @@ from aiogram.fsm.state import State, StatesGroup
 from smartstudentbot.models import RoommatePreferences
 from smartstudentbot.utils.db_utils import get_user, save_user, find_matching_roommates
 from smartstudentbot.utils.logger import logger
-from smartstudentbot.utils.common import check_json_version
+from smartstudentbot.utils.json_utils import read_json_file
 
 router = Router()
 
@@ -17,7 +17,7 @@ class RoommateStates(StatesGroup):
     notes = State()
 
 def load_lang(lang: str = "en") -> dict:
-    return check_json_version(f"smartstudentbot/lang/{lang}.json") or {}
+    return read_json_file(f"smartstudentbot/lang/{lang}.json") or {}
 
 @router.message(Command("roommate"))
 async def cmd_roommate(message: types.Message, state: FSMContext):

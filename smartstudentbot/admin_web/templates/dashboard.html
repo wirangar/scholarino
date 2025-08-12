@@ -20,7 +20,14 @@
         <a href="/logout">Logout</a>
     </header>
     <div class="container">
-        <h2>Registered Users</h2>
+        <div class="navigation-links">
+            <h3>Content Management</h3>
+            <a href="/admin/qna">Q&A</a> |
+            <a href="/admin/discounts">Discounts</a> |
+            <a href="/admin/learning">Learning Resources</a>
+        </div>
+
+        <h2 style="margin-top: 2rem;">Registered Users</h2>
         {% if users %}
             <table>
                 <thead>

@@ -10,7 +10,7 @@ from smartstudentbot.config import ADMIN_CHAT_IDS, CHANNEL_ID, FEATURE_FLAGS
 from smartstudentbot.utils.db_utils import save_news
 from smartstudentbot.utils.gdrive import upload_file
 from smartstudentbot.utils.logger import logger
-from smartstudentbot.utils.common import check_json_version
+from smartstudentbot.utils.json_utils import read_json_file
 
 router = Router()
 
@@ -86,7 +86,7 @@ async def process_news_content(message: types.Message, state: FSMContext):
 async def show_news(message: types.Message):
     """Displays the latest news articles to the user."""
     news_json_path = "smartstudentbot/news.json"
-    data = check_json_version(news_json_path)
+    data = read_json_file(news_json_path)
 
     if not data or not data.get("data"):
         await message.reply("There are no news articles at the moment.")

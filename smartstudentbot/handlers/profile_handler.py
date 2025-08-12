@@ -7,7 +7,7 @@ from pydantic import EmailStr, ValidationError
 from smartstudentbot.models import User
 from smartstudentbot.utils.db_utils import get_user, save_user
 from smartstudentbot.utils.logger import logger
-from smartstudentbot.utils.common import check_json_version
+from smartstudentbot.utils.json_utils import read_json_file
 
 router = Router()
 
@@ -18,7 +18,7 @@ class EditProfileStates(StatesGroup):
 
 def load_lang(lang: str = "en") -> dict:
     """Loads language strings from the correct path."""
-    return check_json_version(f"smartstudentbot/lang/{lang}.json") or {}
+    return read_json_file(f"smartstudentbot/lang/{lang}.json") or {}
 
 @router.message(Command("profile"))
 async def cmd_profile(message: types.Message):

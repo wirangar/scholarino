@@ -6,7 +6,7 @@ from typing import List
 # Use absolute imports for robustness
 from smartstudentbot.config import DATABASE_URL, SQLITE_DB
 from smartstudentbot.utils.logger import logger
-from smartstudentbot.utils.common import check_json_version
+from smartstudentbot.utils.json_utils import read_json_file, write_json_file
 from smartstudentbot.models import User, SuccessStory
 from smartstudentbot.models_db import Base, News, UserDB, SuccessStoryDB
 
@@ -35,11 +35,10 @@ async def save_news(news: dict):
         logger.info(f"News saved to DB: {news['title']}")
 
         json_path = "smartstudentbot/news.json"
-        data = check_json_version(json_path)
+        data = read_json_file(json_path)
         if data:
             data["data"].append(news)
-            with open(json_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
+            write_json_file(json_path, data)
     except Exception as e:
         logger.error(f"Failed to save news: {e}")
         session.rollback()

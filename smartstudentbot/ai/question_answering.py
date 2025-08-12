@@ -2,7 +2,7 @@ from typing import Optional
 from sentence_transformers import SentenceTransformer, util
 import torch
 
-from smartstudentbot.utils.common import check_json_version
+from smartstudentbot.utils.json_utils import read_json_file
 from smartstudentbot.utils.logger import logger
 
 QNA_FILE_PATH = "smartstudentbot/qna.json"
@@ -30,7 +30,7 @@ def _load_knowledge():
     if model is None:
         return
 
-    knowledge_data = check_json_version(KNOWLEDGE_FILE_PATH)
+    knowledge_data = read_json_file(KNOWLEDGE_FILE_PATH)
     if not knowledge_data or "data" not in knowledge_data:
         logger.error(f"Invalid or empty data in {KNOWLEDGE_FILE_PATH}")
         knowledge_base = []
@@ -53,7 +53,7 @@ _load_knowledge()
 
 async def get_simple_answer(question: str) -> Optional[str]:
     """Searches for a simple, case-insensitive, exact-match answer."""
-    qna_data = check_json_version(QNA_FILE_PATH)
+    qna_data = read_json_file(QNA_FILE_PATH)
     if not qna_data or "data" not in qna_data:
         return None
     question_lower = question.strip().lower()

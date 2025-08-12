@@ -5,7 +5,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 from smartstudentbot.utils.db_utils import get_user
 from smartstudentbot.utils.logger import logger
-from smartstudentbot.utils.common import check_json_version
+from smartstudentbot.utils.json_utils import read_json_file
 from smartstudentbot.config import ISEE_THRESHOLD
 
 router = Router()
@@ -18,7 +18,7 @@ class ISEEStates(StatesGroup):
 
 def load_lang(lang: str = "en") -> dict:
     """Loads language strings from the correct path."""
-    return check_json_version(f"smartstudentbot/lang/{lang}.json") or {}
+    return read_json_file(f"smartstudentbot/lang/{lang}.json") or {}
 
 def calculate_isee(income: float, property_size: float, family_members: int) -> tuple[float, str]:
     """Calculates the ISEE score and determines the scholarship status."""

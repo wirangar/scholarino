@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discounts Management</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background-color: #f0f2f5; }
+        header { background-color: #333; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        header a { color: white; text-decoration: none; }
+        .container { padding: 2rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: white; }
+        th, td { border: 1px solid #ddd; padding: 0.8rem; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .back-link { margin-bottom: 1rem; display: inline-block; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Discounts Management</h1>
+        <a href="/admin/dashboard">Back to Dashboard</a>
+    </header>
+    <div class="container">
+        <div class="add-form">
+            <h3>Add New Discount</h3>
+            <form action="{{ url_for('add_discount') }}" method="post">
+                <input type="text" name="store" placeholder="Store" required>
+                <input type="text" name="offer" placeholder="Offer" required>
+                <input type="text" name="conditions" placeholder="Conditions" required>
+                <button type="submit">Add Discount</button>
+            </form>
+        </div>
+
+        <h2 style="margin-top: 2rem;">Existing Student Discounts</h2>
+        {% if discounts_data %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Store</th>
+                        <th>Offer</th>
+                        <th>Conditions</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in discounts_data %}
+                        <tr>
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.store }}</td>
+                            <td>{{ item.offer }}</td>
+                            <td>{{ item.conditions }}</td>
+                            <td>
+                                <a href="{{ url_for('edit_discount_page', item_id=item.id) }}">Edit</a>
+                                <form action="{{ url_for('delete_discount', item_id=item.id) }}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                    <button type="submit" style="background:none; border:none; color:red; cursor:pointer; text-decoration:underline;">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No discount data found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

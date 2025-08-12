@@ -2,7 +2,7 @@ from aiogram import Router, types
 from aiogram.filters import Command
 
 from smartstudentbot.utils.logger import logger
-from smartstudentbot.utils.common import check_json_version
+from smartstudentbot.utils.json_utils import read_json_file
 from smartstudentbot.utils.db_utils import get_user
 
 router = Router()
@@ -11,7 +11,7 @@ DISCOUNTS_PATH = "smartstudentbot/discounts.json"
 
 def load_lang(lang: str = "en") -> dict:
     """Loads language strings from the correct path."""
-    return check_json_version(f"smartstudentbot/lang/{lang}.json") or {}
+    return read_json_file(f"smartstudentbot/lang/{lang}.json") or {}
 
 @router.message(Command("discounts"))
 async def discounts_handler(message: types.Message):
@@ -24,7 +24,7 @@ async def discounts_handler(message: types.Message):
     lang = user.language if user else "en"
     lang_data = load_lang(lang)
 
-    data = check_json_version(DISCOUNTS_PATH)
+    data = read_json_file(DISCOUNTS_PATH)
 
     if not data or not data.get("data"):
         await message.reply(lang_data.get("discounts_no_data", "Sorry, I couldn't find any discount information right now."))

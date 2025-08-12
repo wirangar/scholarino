@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Discount</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background-color: #f0f2f5; }
+        header { background-color: #333; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        header a { color: white; text-decoration: none; }
+        .container { padding: 2rem; }
+        form { background-color: white; padding: 2rem; border-radius: 8px; }
+        input, button { width: 100%; padding: 0.8rem; margin-bottom: 1rem; border-radius: 4px; border: 1px solid #ddd; }
+        button { background-color: #333; color: white; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Edit Discount</h1>
+        <a href="{{ url_for('discounts_page') }}">Back to Discounts List</a>
+    </header>
+    <div class="container">
+        <form action="{{ url_for('edit_discount', item_id=item.id) }}" method="post">
+            <label for="store">Store</label>
+            <input type="text" id="store" name="store" value="{{ item.store }}" required>
+
+            <label for="offer">Offer</label>
+            <input type="text" id="offer" name="offer" value="{{ item.offer }}" required>
+
+            <label for="conditions">Conditions</label>
+            <input type="text" id="conditions" name="conditions" value="{{ item.conditions }}" required>
+
+            <button type="submit">Update Discount</button>
+        </form>
+    </div>
+</body>
+</html>
