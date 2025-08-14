@@ -1,0 +1,15 @@
+# Testing
+pytest
+pytest-asyncio
+
+# Build-time
+Cython
+
+# Linting & Formatting
+ruff
+black
+isort
+mypy
+
+# Dependency Management
+pip-tools

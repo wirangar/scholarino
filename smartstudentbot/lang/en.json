@@ -1,0 +1,31 @@
+{
+  "welcome": "Welcome to the SmartStudentBot for Perugia! 🎓\n\nPlease select your language to continue:",
+  "lang_button_en": "🇬🇧 English",
+  "lang_button_fa": "🇮🇷 فارسی",
+  "lang_button_it": "🇮🇹 Italiano",
+  "language_selected": "Language set to English.",
+
+  "guide_menu_title": "Select a topic from the guide:",
+  "guide_button_housing": "🏠 Housing",
+  "guide_button_transport": "🚌 Transport",
+  "guide_button_university": "🏛️ University",
+  "back_button": "⬅️ Back",
+
+  "cost_of_living_title": "Living Costs in Perugia",
+  "monthly_costs_header": "📅 Monthly Costs",
+  "one_time_costs_header": "💸 One-Time Costs",
+  "total_estimate_header": "📊 Total Estimate",
+
+  "isee_calculator_title": "ISEE Calculator for Scholarship",
+  "isee_intro": "This tool helps you estimate your ISEE. Please provide the following information.",
+  "ask_income": "What is your family's total annual income (in Euro)?",
+  "ask_property": "What is the total size of family-owned property (in square meters)?",
+  "ask_family_members": "How many members are in your family (including yourself)?",
+  "isee_result_message": "Your estimated ISEE is: €{isee:.2f}\nScholarship Status: {status}",
+  "scholarship_status_full": "Full Scholarship",
+  "scholarship_status_medium": "Medium Scholarship",
+  "scholarship_status_partial": "Partial Scholarship",
+  "scholarship_status_none": "Not Eligible",
+  "invalid_input": "Invalid input. Please enter a valid number.",
+  "calculation_cancelled": "Calculation cancelled."
+}

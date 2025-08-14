@@ -1,0 +1,19 @@
+{
+  "guide_topics": {
+    "housing": {
+      "en": "Finding housing in Perugia can be challenging. Start by looking at websites like Subito.it, Immobiliare.it, and Facebook groups for students in Perugia. Rent for a single room (stanza singola) usually ranges from €250 to €400 per month.",
+      "fa": "پیدا کردن مسکن در پروجا می‌تواند چالش‌برانگیز باشد. از وب‌سایت‌هایی مانند Subito.it، Immobiliare.it و گروه‌های فیسبوک دانشجویان پروجا شروع کنید. اجاره یک اتاق یک نفره (stanza singola) معمولاً بین ۲۵۰ تا ۴۰۰ یورو در ماه است.",
+      "it": "Trovare alloggio a Perugia può essere difficile. Inizia cercando su siti come Subito.it, Immobiliare.it e gruppi Facebook per studenti a Perugia. L'affitto per una stanza singola varia solitamente dai 250€ ai 400€ al mese."
+    },
+    "transport": {
+      "en": "Perugia's public transport includes buses and the Minimetrò. A monthly student pass is available and is the most convenient option. You can buy tickets at 'tabaccheria' shops or via the official app.",
+      "fa": "حمل و نقل عمومی پروجا شامل اتوبوس و مینی‌مترو است. بلیط ماهانه دانشجویی در دسترس است و راحت‌ترین گزینه محسوب می‌شود. می‌توانید بلیط‌ها را از مغازه‌های 'tabaccheria' یا از طریق اپلیکیشن رسمی خریداری کنید.",
+      "it": "Il trasporto pubblico di Perugia include autobus e il Minimetrò. È disponibile un abbonamento mensile per studenti, che è l'opzione più conveniente. Puoi acquistare i biglietti nelle tabaccherie o tramite l'app ufficiale."
+    },
+    "university": {
+        "en": "The main universities are the University of Perugia (Università degli Studi di Perugia) and the University for Foreigners (Università per Stranieri di Perugia). Make sure you know the location of your department and the student secretary office (segreteria studenti).",
+        "fa": "دانشگاه‌های اصلی عبارتند از دانشگاه پروجا (Università degli Studi di Perugia) و دانشگاه برای خارجیان (Università per Stranieri di Perugia). از محل دپارتمان خود و دفتر امور دانشجویی (segreteria studenti) اطمینان حاصل کنید.",
+        "it": "Le principali università sono l'Università degli Studi di Perugia e l'Università per Stranieri di Perugia. Assicurati di conoscere l'ubicazione del tuo dipartimento e l'ufficio della segreteria studenti."
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "welcome": "Benvenuto nello SmartStudentBot per Perugia! 🎓\n\nSeleziona la tua lingua per continuare:",
+  "lang_button_en": "🇬🇧 English",
+  "lang_button_fa": "🇮🇷 فارسی",
+  "lang_button_it": "🇮🇹 Italiano",
+  "language_selected": "Lingua impostata su Italiano.",
+
+  "guide_menu_title": "Seleziona un argomento dalla guida:",
+  "guide_button_housing": "🏠 Alloggio",
+  "guide_button_transport": "🚌 Trasporti",
+  "guide_button_university": "🏛️ Università",
+  "back_button": "⬅️ Indietro",
+
+  "cost_of_living_title": "Costo della Vita a Perugia",
+  "monthly_costs_header": "📅 Costi Mensili",
+  "one_time_costs_header": "💸 Costi Una Tantum",
+  "total_estimate_header": "📊 Stima Totale",
+
+  "isee_calculator_title": "Calcolatore ISEE per Borsa di Studio",
+  "isee_intro": "Questo strumento ti aiuta a stimare il tuo ISEE. Per favore, fornisci le seguenti informazioni.",
+  "ask_income": "Qual è il reddito annuo totale della tua famiglia (in Euro)?",
+  "ask_property": "Qual è la dimensione totale degli immobili di proprietà della famiglia (in metri quadrati)?",
+  "ask_family_members": "Quanti membri ci sono nella tua famiglia (incluso te stesso)?",
+  "isee_result_message": "Il tuo ISEE stimato è: €{isee:.2f}\nStato Borsa di Studio: {status}",
+  "scholarship_status_full": "Borsa di studio completa",
+  "scholarship_status_medium": "Borsa di studio media",
+  "scholarship_status_partial": "Borsa di studio parziale",
+  "scholarship_status_none": "Non idoneo",
+  "invalid_input": "Input non valido. Per favore, inserisci un numero valido.",
+  "calculation_cancelled": "Calcolo annullato."
+}

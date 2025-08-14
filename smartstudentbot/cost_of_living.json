@@ -1,0 +1,47 @@
+{
+  "monthly_costs": {
+    "rent": {
+      "name_en": "Rent (Single Room)",
+      "name_fa": "اجاره (اتاق یک نفره)",
+      "name_it": "Affitto (Stanza Singola)",
+      "range": "€250 - €400"
+    },
+    "utilities": {
+      "name_en": "Utilities (Gas, Electricity, Water, Internet)",
+      "name_fa": "قبوض (گاز، برق، آب، اینترنت)",
+      "name_it": "Utenze (Gas, Elettricità, Acqua, Internet)",
+      "range": "€80 - €150"
+    },
+    "food": {
+      "name_en": "Groceries",
+      "name_fa": "خرید مواد غذایی",
+      "name_it": "Spesa alimentare",
+      "range": "€150 - €250"
+    },
+    "transport": {
+      "name_en": "Public Transport Pass",
+      "name_fa": "بلیط ماهانه حمل و نقل عمومی",
+      "name_it": "Abbonamento Trasporto Pubblico",
+      "range": "€35 - €50"
+    }
+  },
+  "one_time_costs": {
+    "permit_stay": {
+      "name_en": "Permit of Stay (Permesso di Soggiorno)",
+      "name_fa": "کارت اقامت (Permesso di Soggiorno)",
+      "name_it": "Permesso di Soggiorno",
+      "range": "approx. €150"
+    },
+    "deposit": {
+      "name_en": "Rent Deposit (1-2 months)",
+      "name_fa": "ودیعه مسکن (۱-۲ ماه اجاره)",
+      "name_it": "Deposito Affitto (1-2 mesi)",
+      "range": "€250 - €800"
+    }
+  },
+  "summary": {
+    "en": "Estimated total monthly cost: €550 - €900. This is an estimate and can vary greatly based on your lifestyle.",
+    "fa": "مجموع هزینه تخمینی ماهانه: ۵۵۰ تا ۹۰۰ یورو. این یک تخمین است و بسته به سبک زندگی شما می‌تواند بسیار متفاوت باشد.",
+    "it": "Costo totale mensile stimato: €550 - €900. Questa è una stima e può variare notevolmente in base al tuo stile di vita."
+  }
+}
